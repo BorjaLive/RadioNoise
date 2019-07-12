@@ -4,8 +4,9 @@ import radionoisecontroller.graphics.Texture;
 
 public class global {
     public static final int BAUD_SPEED = 9600;
-    //static String PORT_NAME = "/dev/ttyACM0";
-    public static final String ARDUINO_PORT = "COM4";
+    static String ARDUINO_PORT = "/dev/ttyACM0";
+    //public static final String ARDUINO_PORT = "COM4";
+    public static final boolean ARDUINO_OVERRIDE = false;
     public static final int BYTES_IN = 35, BYTES_OUT = 20;
     
     //public static final String SERVER_IP = "192.168.1.37";
@@ -44,7 +45,7 @@ public class global {
     public static final int[] COLOR_PURPLE = new int[]{255, 0, 255};
     public static final int[] COLOR_WHITE = new int[]{255, 255, 255};
     
-    public static final String RESOURCES = "C:\\Users\\Margaret\\Documents\\NetBeansProjects\\ctrlController\\src\\ctrlcontroller\\graphics\\resources\\";
+    public static final String RESOURCES = "/home/pi/Desktop/RadioNoise/RadioNoiseController/src/radionoisecontroller/graphics/resources/";
     
     public static Texture StreamImage;
     

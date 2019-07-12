@@ -2,8 +2,9 @@ package radionoiseplayer;
 
 public class global {
     public static int BAUD_SPEED = 9600;
-    //static String PORT_NAME = "/dev/ttyACM0";
-    public static String ARDUINO_PORT = "COM4";
+    static String ARDUINO_PORT = "/dev/ttyACM0";
+    //public static final String ARDUINO_PORT = "COM4";
+    public static final boolean ARDUINO_OVERRIDE = false;
     public static int BYTES_IN = 5, BYTES_OUT = 10;
     
     public static String SERVER_IP = "localhost";

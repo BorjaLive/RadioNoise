@@ -47,7 +47,8 @@ public class MultiWindow extends Thread{
         int[] monitorY = new int[1];
         
         for (int i = 0; i < windows.length; i++) {
-            glfwGetMonitorPos(glfwGetMonitors().get(i), monitorX, monitorY);
+            if(glfwGetMonitors().sizeof() <= i)
+                glfwGetMonitorPos(glfwGetMonitors().get(i), monitorX, monitorY);
 
             long handle = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "CTRLcontroller", NULL, NULL);
             if (handle == NULL) {

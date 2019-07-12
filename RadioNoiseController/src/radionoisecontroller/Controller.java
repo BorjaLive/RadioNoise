@@ -6,6 +6,7 @@ import static radionoisecontroller.global.*;
 import radionoisecontroller.graphics.WindowManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Arrays;
 
 public class Controller {
     /*
@@ -176,7 +177,7 @@ public class Controller {
         
         outBuffer[0] = (byte)2;
         port.writeBytes(outBuffer, BYTES_OUT);
-        //System.out.println(Arrays.toString(curState));
+        System.out.println(Arrays.toString(curState));
     }
     
     public static boolean should_continue(){
