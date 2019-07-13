@@ -45,7 +45,7 @@ public class global {
     public static final int[] COLOR_PURPLE = new int[]{255, 0, 255};
     public static final int[] COLOR_WHITE = new int[]{255, 255, 255};
     
-    public static final String RESOURCES = "/home/pi/Desktop/RadioNoise/RadioNoiseController/src/radionoisecontroller/graphics/resources/";
+    public static final String RESOURCES = "/home/arlin/Escritorio/RadioNoise/RadioNoiseController/src/radionoisecontroller/graphics/resources/";
     
     public static Texture StreamImage;
     

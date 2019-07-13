@@ -33,13 +33,13 @@ public class module_video extends module{
         
         int size;
         while(!interrupted() && cliente.check()){
-            if(!cliente.recive(recvBuffer_size, 2000))
+            if(!cliente.recive(recvBuffer_size))
                 break;
             
             size = ByteBuffer.wrap(recvBuffer_size).getInt();
             //System.out.println("PESA: "+size);
             
-            if(!cliente.recive(recvBuffer_img, 0, size, 2000))
+            if(!cliente.recive(recvBuffer_img, 0, size, 100))
                 break;
             
             WM.setVideoChanged(2);

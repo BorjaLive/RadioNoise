@@ -39,7 +39,7 @@ public class module_audioIN extends module{
                     state = 2;
                 
                 while(!isInterrupted()&& cliente.check()){
-                    if(!cliente.recive(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE, 2000))
+                    if(!cliente.recive(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE, 100))
                         break;
                     speakers.write(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE);
                     try {sleep(5);} catch (InterruptedException ex) {break;}

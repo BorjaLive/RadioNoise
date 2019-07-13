@@ -7,7 +7,8 @@ import radionoisecontroller.graphics.MultiWindow;
 public class RadioNoiseController {
 
     public static void main(String[] args) throws InterruptedException {
-        if(!((Controller.initiate() && Controller.arduinoTest()) || ARDUINO_OVERRIDE)){
+        Controller.initiate();
+        if(!(ARDUINO_OVERRIDE || Controller.arduinoTest())){
             System.err.println("No se pudo conectar con Arduino.");
         }else{
             System.out.println("Conexion con Arduino correcta.");

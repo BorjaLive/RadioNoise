@@ -5,11 +5,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TCPclient {
     private Socket socket;
     private DataInputStream input;
     private DataOutputStream output;
+    
+    private final int MAXNULLRECV = 100;
     
     public boolean connect(String ip, int port, int timeout){
         disconnect();
@@ -57,21 +61,22 @@ public class TCPclient {
         }
         return false;
     }
-    public boolean recive(byte [] data, int timeout){
-        return recive(data, 0, data.length, timeout);
+    public boolean recive(byte [] data){
+        return recive(data, 0, data.length, MAXNULLRECV);
     }
-    public boolean recive(byte[] data, int pos, int size, int timeout){
+    public boolean recive(byte[] data, int pos, int size, int nullRest){
         if(input == null) return false;
         try {
-            socket.setSoTimeout(timeout);
             int readen = input.read(data, pos, size);
-            if(readen != -1){
+            if(readen != size && nullRest != 0){
+                    recive(data, pos+readen, size-readen, nullRest-1);
+                    try{Thread.sleep(5);} catch (InterruptedException ex) {}
+            }else{
+                System.err.println("CLIENTE TCP: No se pudo recivir, limite de intentos sobrepasado");
                 return false;
-            }else if(readen != size){
-                recive(data, pos+readen, size-readen, timeout);
             }
         } catch (IOException ex) {
-            //Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("CLIENTE TCP: No se pudo recivir");
             return false;
         }

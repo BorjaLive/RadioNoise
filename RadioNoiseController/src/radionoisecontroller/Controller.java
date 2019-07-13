@@ -52,6 +52,16 @@ public class Controller {
     private static WindowManager WM;
     
     public static boolean initiate(){
+        sendData = new byte[BYTES_SEND];
+        recvData = new byte[BYTES_RECIVE];
+        
+        blink_conn = 0;
+        
+        WM = null;
+        return true;
+    }
+    
+    public static boolean arduinoTest(){
         port = SerialPort.getCommPort(ARDUINO_PORT);
         port.setBaudRate(BAUD_SPEED);
         port.setComPortParameters(BAUD_SPEED, 8, 1, 0);
@@ -66,16 +76,6 @@ public class Controller {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        sendData = new byte[BYTES_SEND];
-        recvData = new byte[BYTES_RECIVE];
-        
-        blink_conn = 0;
-        
-        WM = null;
-        return true;
-    }
-    
-    public static boolean arduinoTest(){
         outBuffer[0] = (byte)1;
         byte[] recv = new byte[BYTES_IN];
         data_exchange(outBuffer, recv);
@@ -104,7 +104,7 @@ public class Controller {
             controller.interrupt();
             controller = null;
         }
-        if(curState[2] == 1 && pasState[2] == 0 && (controller == null || !controller.isAlive())){
+        if(curState[2] == 1 && pasState[2] == 0 && controller == null){
             controller = new module_controller(sendData, recvData);
             controller.start();
         }
@@ -112,7 +112,7 @@ public class Controller {
             video.interrupt();
             video = null;
         }
-        if(curState[3] == 1 && pasState[3] == 0 && (video == null || !video.isAlive())){
+        if(curState[3] == 1 && pasState[3] == 0 && video == null){
             video = new module_video(WM.getVideoBuffer(), WM);
             video.start();
         }
@@ -122,7 +122,7 @@ public class Controller {
             audioIN.interrupt();
             audioIN = null;
         }
-        if(curState[4] == 1 && pasState[4] == 0 && (audioIN == null || !audioIN.isAlive())){
+        if(curState[4] == 1 && pasState[4] == 0 && audioIN == null){
             audioIN = new module_audioIN();
             audioIN.start();
         }
@@ -131,7 +131,7 @@ public class Controller {
             audioOUT.interrupt();
             audioOUT = null;
         }
-        if(curState[5] == 1 && pasState[5] == 0 && (audioOUT == null || !audioOUT.isAlive())){
+        if(curState[5] == 1 && pasState[5] == 0 && audioOUT == null){
             audioOUT = new module_audioOUT();
             audioOUT.start();
         }
@@ -177,7 +177,7 @@ public class Controller {
         
         outBuffer[0] = (byte)2;
         port.writeBytes(outBuffer, BYTES_OUT);
-        System.out.println(Arrays.toString(curState));
+        //System.out.println(Arrays.toString(curState));
     }
     
     public static boolean should_continue(){

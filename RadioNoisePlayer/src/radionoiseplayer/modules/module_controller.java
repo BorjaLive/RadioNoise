@@ -52,15 +52,13 @@ public class module_controller extends module{
             
             //El servidor comienza reciviendo
             while(servidor.check()){
-                if(!servidor.recive(recv, 2000))
+                if(!servidor.recive(recv))
                     break;
-                
-                try{sleep(SEND_DELAY);}catch(InterruptedException e){break;}
                 
                 if(!servidor.send(send))
                     break;
                 
-                try{sleep(SEND_DELAY/2);}catch(InterruptedException e){break;}
+                try{sleep(SEND_DELAY);}catch(InterruptedException e){break;}
             }
             System.out.println("El servidor se ha desconectado");
             servidor.disconnect();

@@ -57,10 +57,9 @@ public class module_controller extends module{
         while(!interrupted() && cliente.check()){
             if(!cliente.send(send))
                 break;
+            System.out.println("ENVIO");
             
-            try{sleep(SEND_DELAY/2);}catch(InterruptedException e){break;}
-            
-            if(!cliente.recive(recv, 2000))
+            if(!cliente.recive(recv))
                 break;
                 
             //System.out.println("LO QUE RECIVO: "+Arrays.toString(recvTMP));

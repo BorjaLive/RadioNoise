@@ -1,6 +1,7 @@
 package radionoiseplayer;
 
 import com.fazecast.jSerialComm.SerialPort;
+import java.util.Arrays;
 import radionoiseplayer.modules.*;
 import static radionoiseplayer.global.*;
 import java.util.logging.Level;
@@ -36,6 +37,16 @@ public class Controller {
     private static byte[] recvData, sendData;
     
     public static boolean initiate(){
+        sendData = new byte[BYTES_SEND];
+        recvData = new byte[BYTES_RECIVE];
+        
+        controller = new module_controller(sendData, recvData);
+        controller.start();
+        
+        return true;
+    }
+    
+    public static boolean arduinoTest(){
         port = SerialPort.getCommPort(ARDUINO_PORT);
         port.setBaudRate(BAUD_SPEED);
         port.setComPortParameters(BAUD_SPEED, 8, 1, 0);
@@ -50,15 +61,6 @@ public class Controller {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        sendData = new byte[BYTES_SEND];
-        recvData = new byte[BYTES_RECIVE];
-        
-        controller = new module_controller(sendData, recvData);
-        
-        return true;
-    }
-    
-    public static boolean arduinoTest(){
         outBuffer[0] = (byte)1;
         byte[] recv = new byte[BYTES_IN];
         data_exchange(outBuffer, recv);
@@ -78,33 +80,33 @@ public class Controller {
     public static void act(){
         System.arraycopy(curState, 0, pasState, 0, curState.length);
         outBuffer[0] = (byte)3;
-        data_exchange(outBuffer, curState);
+        //data_exchange(outBuffer, curState);
         
         //TODO: Toda la logica
         
         //Iniciar e interrumpir modulos
-        if(sendData[4] == 0 && audioOUT != null){
+        if(recvData[4] == 0 && audioOUT != null){
             audioOUT.interrupt();
             audioOUT = null;
         }
-        if(sendData[4] == 1 && sendData[4] == 0 && (audioOUT == null || !audioOUT.isAlive())){
+        if(recvData[4] == 1 && recvData[4] == 0 && (audioOUT == null || !audioOUT.isAlive())){
             audioOUT = new module_audioOUT();
             audioOUT.start();
         }
-        if(sendData[4] == 0 && audioIN != null){
+        if(recvData[4] == 0 && audioIN != null){
             audioIN.interrupt();
             audioIN = null;
         }
-        if(sendData[4] == 1 && sendData[4] == 0 && (audioIN == null || !audioIN.isAlive())){
+        if(recvData[4] == 1 && recvData[4] == 0 && (audioIN == null || !audioIN.isAlive())){
             audioIN = new module_audioIN();
             audioIN.start();
         }
         
-        if(sendData[6] == 0 && video != null){
+        if(recvData[6] == 0 && video != null){
             video.interrupt();
             video = null;
         }
-        if(sendData[6] == 1 && sendData[6] == 0 && (video == null || !video.isAlive())){
+        if(recvData[6] == 1 && recvData[6] == 0 && (video == null || !video.isAlive())){
             video = new module_video();
             video.start();
         }
@@ -113,8 +115,8 @@ public class Controller {
         
         
         outBuffer[0] = (byte)2;
-        port.writeBytes(outBuffer, BYTES_OUT);
-        //System.out.println(Arrays.toString(curState));
+        //port.writeBytes(outBuffer, BYTES_OUT);
+        //System.out.println(Arrays.toString(recvData));
     }
     
     public static boolean should_continue(){
