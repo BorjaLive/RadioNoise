@@ -10,6 +10,7 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
 import org.bytedeco.javacv.VideoInputFrameGrabber;
 import org.bytedeco.opencv.opencv_core.IplImage;
 import radionoiseplayer.conn.TCPserver;
@@ -27,7 +28,7 @@ public class module_video extends module{
     public module_video(){
         servidor = new TCPserver();
         
-        grabber = new VideoInputFrameGrabber(0);
+        grabber = new OpenCVFrameGrabber(0);
         converter = new OpenCVFrameConverter.ToIplImage();
     }
     
@@ -83,7 +84,7 @@ public class module_video extends module{
                 
                 try {timer.sync();} catch (Exception ex) {break;}
             }
-            System.out.println("El servidor se ha desconectado");
+            System.out.println("El servidor de video se ha desconectado");
             servidor.disconnect();
         }
         

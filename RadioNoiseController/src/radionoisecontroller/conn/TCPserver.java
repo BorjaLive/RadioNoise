@@ -100,22 +100,26 @@ public class TCPserver {
         }
         return false;
     }
-    public boolean recive(byte [] data){
-        return recive(data, 0, data.length, MAXNULLRECV);
-    }
     public boolean recive(byte[] data, int pos, int size, int nullRest){
         if(input == null) return false;
         try {
             int readen = input.read(data, pos, size);
-            if(readen != size && nullRest != 0){
-                    recive(data, pos+readen, size-readen, nullRest-1);
-                    try{Thread.sleep(5);} catch (InterruptedException ex) {}
+            if(readen == -1){
+                readen = 0;
+                nullRest--;
+            }
+            if(readen == size){
+                return true;
+            }else if(nullRest != 0){
+                    recive(data, pos+readen, size-readen, nullRest);
+                    try{Thread.sleep(1);} catch (InterruptedException ex) {}
             }else{
-                System.err.println("CLIENTE TCP: No se pudo recivir, limite de intentos sobrepasado");
+                System.err.println("SERVIDOR TCP: No se pudo recivir, limite de intentos sobrepasado");
+                return false;
             }
         } catch (IOException ex) {
             Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("CLIENTE TCP: No se pudo recivir");
+            System.err.println("SERVIDOR TCP: No se pudo recivir");
             return false;
         }
         return true;

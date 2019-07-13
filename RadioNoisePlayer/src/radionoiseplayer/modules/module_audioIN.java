@@ -33,7 +33,7 @@ public class module_audioIN extends module{
                 state = 1;
                 int tryes = CONNECTION_RETRYS;
                 while(tryes-- > 0 && !cliente.check() && !interrupted())
-                    cliente.connect(SERVER_IP, AUDIOIN_PORT, 5000);
+                    cliente.connect(SERVER_IP, AUDIOIN_PORT, 100);
                 
                 if(cliente.check())
                     state = 2;
@@ -42,7 +42,6 @@ public class module_audioIN extends module{
                     if(!cliente.recive(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE, 100))
                         break;
                     speakers.write(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE);
-                    try {sleep(5);} catch (InterruptedException ex) {break;}
                 }
                 speakers.drain();
                 speakers.close();

@@ -107,9 +107,15 @@ public class TCPserver {
         if(input == null) return false;
         try {
             int readen = input.read(data, pos, size);
-            if(readen != size && nullRest != 0){
-                    recive(data, pos+readen, size-readen, nullRest-1);
-                    try{Thread.sleep(5);} catch (InterruptedException ex) {}
+            if(readen == -1){
+                readen = 0;
+                nullRest--;
+            }
+            if(readen == size){
+                return true;
+            }else if(nullRest != 0){
+                    recive(data, pos+readen, size-readen, nullRest);
+                    try{Thread.sleep(1);} catch (InterruptedException ex) {}
             }else{
                 System.err.println("SERVIDOR TCP: No se pudo recivir, limite de intentos sobrepasado");
                 return false;

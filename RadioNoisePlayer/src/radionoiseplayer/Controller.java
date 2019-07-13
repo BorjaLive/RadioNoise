@@ -36,6 +36,8 @@ public class Controller {
     private static byte[] outBuffer = new byte[BYTES_OUT];
     private static byte[] recvData, sendData;
     
+    private static int counter = 0;
+    
     public static boolean initiate(){
         sendData = new byte[BYTES_SEND];
         recvData = new byte[BYTES_RECIVE];
@@ -89,15 +91,15 @@ public class Controller {
             audioOUT.interrupt();
             audioOUT = null;
         }
-        if(recvData[4] == 1 && recvData[4] == 0 && (audioOUT == null || !audioOUT.isAlive())){
+        if(recvData[4] == 1 && audioOUT == null){
             audioOUT = new module_audioOUT();
             audioOUT.start();
         }
-        if(recvData[4] == 0 && audioIN != null){
+        if(recvData[5] == 0 && audioIN != null){
             audioIN.interrupt();
             audioIN = null;
         }
-        if(recvData[4] == 1 && recvData[4] == 0 && (audioIN == null || !audioIN.isAlive())){
+        if(recvData[5] == 1 && audioIN == null){
             audioIN = new module_audioIN();
             audioIN.start();
         }
@@ -106,12 +108,19 @@ public class Controller {
             video.interrupt();
             video = null;
         }
-        if(recvData[6] == 1 && recvData[6] == 0 && (video == null || !video.isAlive())){
+        if(recvData[6] == 1 && video == null){
             video = new module_video();
             video.start();
+            System.out.println("VIDEO SERVER START");
         }
         
-        
+        if(recvData[7] == 1){
+            System.out.println("HOLIS "+counter);
+            counter++;
+            recvData[7] = 0;
+        }else{
+            counter = 0;
+        }
         
         
         outBuffer[0] = (byte)2;

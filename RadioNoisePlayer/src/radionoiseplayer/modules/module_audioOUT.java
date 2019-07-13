@@ -48,9 +48,6 @@ public class module_audioOUT extends module{
 
                     if(!servidor.send(sendBuffer))
                         break;
-                    
-                    
-                    try {sleep(5);} catch (InterruptedException ex) {break;}
                 }
                 try {sleep(5);} catch (InterruptedException ex) {break;}
                 System.out.println("El servidor se ha desconectado");                

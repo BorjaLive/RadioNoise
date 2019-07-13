@@ -146,7 +146,7 @@ public class Controller {
         //ENVIO AL PLAYER           4 5 6 : Toggle AudioOUT AudioIN Video
         sendData[4] = curState[4];
         sendData[5] = curState[5];
-        sendData[6] = curState[6];
+        sendData[6] = curState[3];
         
         if(controller != null){
             switch(controller.check()){
@@ -241,6 +241,10 @@ public class Controller {
     */
     private static void drive(){
        sendData[0] = not(curState[1]);
+       if(curState[1] == 0 && pasState[1] == 1)
+           sendData[7] = 1;
+       else
+           sendData[7] = 0;
     }
     
     

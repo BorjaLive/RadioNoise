@@ -26,7 +26,7 @@ public class module_video extends module{
         state = 1;
         int tryes = CONNECTION_RETRYS;
         while(tryes-- > 0 && !cliente.check() && !interrupted())
-            cliente.connect(SERVER_IP, VIDEO_PORT, 5000);
+            cliente.connect(SERVER_IP, VIDEO_PORT, 100);
         
         if(cliente.check())
             state = 2;

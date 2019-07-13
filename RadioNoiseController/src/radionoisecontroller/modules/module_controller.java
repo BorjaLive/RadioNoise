@@ -49,7 +49,7 @@ public class module_controller extends module{
         state = 1;
         int tryes = CONNECTION_RETRYS;
         while(tryes-- > 0 && !cliente.check() && !interrupted())
-            cliente.connect(SERVER_IP, CONTROL_PORT, 5000);
+            cliente.connect(SERVER_IP, CONTROL_PORT, 100);
         
         if(cliente.check())
             state = 2;
@@ -57,7 +57,7 @@ public class module_controller extends module{
         while(!interrupted() && cliente.check()){
             if(!cliente.send(send))
                 break;
-            System.out.println("ENVIO");
+            
             
             if(!cliente.recive(recv))
                 break;

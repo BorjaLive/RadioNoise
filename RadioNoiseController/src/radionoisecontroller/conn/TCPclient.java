@@ -22,7 +22,6 @@ public class TCPclient {
             socket.connect(new InetSocketAddress(ip, port), timeout);
             
             socket.setKeepAlive(false);
-            socket.setSoTimeout(timeout);
             
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
@@ -30,6 +29,9 @@ public class TCPclient {
         } catch (IOException ex) {
             //Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("CLIENTE TCP: No se pudo conectar");
+            timeout--;
+            try{Thread.sleep(1);} catch (InterruptedException e) {}
+            if(timeout != 0) return connect(ip, port, timeout);
         }
         return false;
     }
@@ -64,13 +66,19 @@ public class TCPclient {
     public boolean recive(byte [] data){
         return recive(data, 0, data.length, MAXNULLRECV);
     }
-    public boolean recive(byte[] data, int pos, int size, int nullRest){
+    public boolean recive(byte[] data, int pos, int size, int timeout){
         if(input == null) return false;
         try {
             int readen = input.read(data, pos, size);
-            if(readen != size && nullRest != 0){
-                    recive(data, pos+readen, size-readen, nullRest-1);
-                    try{Thread.sleep(5);} catch (InterruptedException ex) {}
+            if(readen == -1){
+                readen = 0;
+                timeout--;
+            }
+            if(readen == size){
+                return true;
+            }else if(timeout != 0){
+                    try{Thread.sleep(1);} catch (InterruptedException ex) {}
+                    recive(data, pos+readen, size-readen, timeout);
             }else{
                 System.err.println("CLIENTE TCP: No se pudo recivir, limite de intentos sobrepasado");
                 return false;

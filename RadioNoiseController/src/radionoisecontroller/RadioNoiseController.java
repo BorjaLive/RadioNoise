@@ -24,6 +24,7 @@ public class RadioNoiseController {
                 Controller.act();
                 sleep(CTRL_DELAY);
             }
+            Controller.stop();
             System.out.println("Salir");
             windows.interrupt();
         }
