@@ -3,6 +3,7 @@ package radionoisecontroller;
 import static java.lang.Thread.sleep;
 import static radionoisecontroller.global.*;
 import radionoisecontroller.graphics.MultiWindow;
+import radionoisecontroller.modules.module_wifi;
 
 public class RadioNoiseController {
 

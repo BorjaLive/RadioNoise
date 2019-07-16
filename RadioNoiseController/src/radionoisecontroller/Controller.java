@@ -43,6 +43,7 @@ public class Controller {
     private static module_wifi wifi;
     
     private static SerialPort port;
+    public static int wlan_strength;
     
     private static byte[] outBuffer = new byte[BYTES_OUT];
     private static byte[] recvData, sendData;
@@ -58,6 +59,9 @@ public class Controller {
         blink_conn = 0;
         
         WM = null;
+        
+        wlan_strength = -1;
+        
         return true;
     }
     
@@ -102,7 +106,6 @@ public class Controller {
         //Iniciar e interrumpir modulos
         if(curState[2] == 0 && controller != null){
             controller.interrupt();
-            controller = null;
         }
         if(curState[2] == 1 && pasState[2] == 0 && controller == null){
             controller = new module_controller(sendData, recvData);
@@ -110,7 +113,6 @@ public class Controller {
         }
         if(curState[3] == 0 && video != null){
             video.interrupt();
-            video = null;
         }
         if(curState[3] == 1 && pasState[3] == 0 && video == null){
             video = new module_video(WM.getVideoBuffer(), WM);
@@ -118,22 +120,25 @@ public class Controller {
         }
         
         if(curState[4] == 0 && audioIN != null){
-            System.out.println("DEBERIA CERRAR CLIENTE");
             audioIN.interrupt();
-            audioIN = null;
         }
         if(curState[4] == 1 && pasState[4] == 0 && audioIN == null){
             audioIN = new module_audioIN();
             audioIN.start();
         }
         if(curState[5] == 0 && audioOUT != null){
-            System.out.println("DEBERIA CERRAR SERVIDOR");
             audioOUT.interrupt();
-            audioOUT = null;
         }
         if(curState[5] == 1 && pasState[5] == 0 && audioOUT == null){
             audioOUT = new module_audioOUT();
             audioOUT.start();
+        }
+        if(curState[8] == 0 && wifi != null){
+            wifi.interrupt();
+        }
+        if(curState[8] == 1 && pasState[8] == 0 && wifi == null){
+            wifi = new module_wifi();
+            wifi.start();
         }
         
         if(curState[6] == 0 && pasState[6] == 1 && audioOUT != null){
