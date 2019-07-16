@@ -52,22 +52,22 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 10 | Toggle Safe frenada |
 | 11 | Toggle Modo tanque |
 | 12 | Toggle Turbo |
-| 13 | Button Turbo |
-| 14 | Button Reverse turbo |
-| 15 | Button Claxon |
-| 16 | Button Reset view |
-| 17 | Direction Move X |
-| 18 | Direction Move Y |
-| 19 | Direction View X |
-| 20 | Direction View Y |
-| 21 | Potencia PAN de tracción |
-| 22 | Potencia Claxon |
-| 23 | Potencia Velocidad |
-| 24 | Potencia Audio mando |
-| 25 | Potencia Audio vehículo |
-| 26 | SALIR |
-| 27 | NO SE USA |
-| 28 | NO SE USA |
+| 13 | Button Audio OUT activar |
+| 14 | Button Turbo |
+| 15 | Button Reverse turbo |
+| 16 | Button Claxon |
+| 17 | Button Reset view |
+| 18 | Direction Move X |
+| 19 | Direction Move Y |
+| 20 | Direction View X |
+| 21 | Direction View Y |
+| 22 | Potencia PAN de tracción |
+| 23 | Potencia Claxon |
+| 24 | Potencia Velocidad |
+| 25 | Potencia Sensividlidad camara |
+| 26 | Potencia Audio mando |
+| 27 | Potencia Audio vehículo |
+| 28 | SALIR |
 | 29 | NO SE USA |
 
 Aclaración: La rueda inferior izquierda es la 1, la inferior derecha es la 2, la superior izquierda es la 3 y la superior derecha es la 4.
@@ -86,7 +86,7 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 6 | LED Rueda 2 Rojo |
 | 7 | LED Rueda 3 Rojo |
 | 8 | LED Rueda 4 Rojo |
-| 0 | LED Modulo Wifi Verde |
+| 9 | LED Modulo Wifi Verde |
 | 10 | LED Modulo Controller Verde |
 | 11 | LED Modulo Video Verde |
 | 12 | LED Modulo Audio IN Verde |
@@ -159,6 +159,7 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | D 31 IN | Button Reverse Turbo |
 | D 33 IN | Button Claxon |
 | D 35 IN | Button Reset View |
+| D 37 IN | Button Activar Audio OUT |
 | A 0 IN | Potenciómetro Move X |
 | A 1 IN | Potenciómetro Move Y |
 | A 2 IN | Potenciómetro View X |
@@ -169,26 +170,26 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | A 7 IN | Potenciómetro Sensibilidad cámara |
 | A 8 IN | Potenciómetro Volumen mando |
 | A 9 IN | Potenciómetro Volumen vehículo |
-| D 37 OUT | LED Verde Rueda 1 |
-| D 39 OUT | LED Verde Rueda 2 |
-| D 41 OUT | LED Verde Rueda 3 | 
-| D 43 OUT | LED Verde Rueda 4 |
-| D 45 OUT | LED Rojo Rueda 1 |
-| D 47 OUT | LED Rojo Rueda 2 |
-| D 49 OUT | LED Rojo Rueda 3 |
-| D 12 OUT | LED Rojo Rueda 4 |
-| D 11 OUT | LED Verde Modo tanque |
-| D 10 OUT | LED Rojo Modo tanque |
-| D 9 OUT | LED Verde Module Wifi |
-| D 8 OUT | LED Verde Module Controller |
-| D 7 OUT | LED Verde Module Video |
-| D 6 OUT | LED Verde Module Audio IN |
-| D 5 OUT | LED Verde Module Audio OUT |
-| D 4 OUT | LED Rojo Module Wifi |
-| D 3 OUT | LED Rojo Module Controller |
-| D 2 OUT | LED Rojo Module Video |
-| D 14 OUT | LED Rojo Module Audio IN |
-| D 15 OUT | LED Rojo Module Audio OUT |
+| D 39 OUT | LED Verde Rueda 1 |
+| D 41 OUT | LED Verde Rueda 2 |
+| D 43 OUT | LED Verde Rueda 3 | 
+| D 45 OUT | LED Verde Rueda 4 |
+| D 47 OUT | LED Rojo Rueda 1 |
+| D 49 OUT | LED Rojo Rueda 2 |
+| D 12 OUT | LED Rojo Rueda 3 |
+| D 11 OUT | LED Rojo Rueda 4 |
+| D 10 OUT | LED Verde Modo tanque |
+| D 9 OUT | LED Rojo Modo tanque |
+| D 8 OUT | LED Verde Module Wifi |
+| D 7 OUT | LED Verde Module Controller |
+| D 6 OUT | LED Verde Module Video |
+| D 5 OUT | LED Verde Module Audio IN |
+| D 4 OUT | LED Verde Module Audio OUT |
+| D 3 OUT | LED Rojo Module Wifi |
+| D 2 OUT | LED Rojo Module Controller |
+| D 14 OUT | LED Rojo Module Video |
+| D 15 OUT | LED Rojo Module Audio IN |
+| D 16 OUT | LED Rojo Module Audio OUT |
 
 ### Pinout Arduino Mega vehículo
 
@@ -204,6 +205,18 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | D 28 OUT | LED Azul Module Video |
 | D 30 OUT | LED Azul Module Audio IN |
 | D 32 OUT | LED Azul Module Audio OUT |
+| D 12 OUT | Potencia motor 1 |
+| D 11 OUT | Potencia motor 2 |
+| D 10 OUT | Potencia motor 3 |
+| D 9 OUT | Potencia motor 4 |
+| D 31 OUT | Sentido 1 motor 1 |
+| D 33 OUT | Sentido 2 motor 1 |
+| D 35 OUT | Sentido 1 motor 2 |
+| D 37 OUT | Sentido 2 motor 2 |
+| D 39 OUT | Sentido 1 motor 3 |
+| D 41 OUT | Sentido 2 motor 3 |
+| D 43 OUT | Sentido 1 motor 4 |
+| D 45 OUT | Sentido 2 motor 4 |
 
 ### LEDs
 Todos los leds consumen 20 mA, por seguridad se considera 17 mA.
@@ -290,9 +303,13 @@ Para el resto vas a necesitar las siguientes piezas, los nombres se mantendrán 
 Las medidas están ajustadas para encajar las piezas de tal forma que se garantice una buena resistencia a golpes frontales, a la vez que se prioriza la estética en las uniones.
 
 Si optas por comprar un pliego B1 (aprox 100x70 cm) de cartón pluma, puedes seguir esta guía de disposición.
+
 ![Disposicion para B1](https://i.imgur.com/4WiCRpl.png)
+
 Si solo dispones de pliegos B2 (aprox 70x50 cm), también he creado la siguiente disposición en dos pliegos.
-//Adjuntar foto
+
+![Disposicion para B2](https://i.imgur.com/J597puH.png)
+
 Para otras medidas, diviértete jugando al Tetris.
 
 Para empezar la construcción, coloca las superficies. Importante, sobresale  un centímetro de la base de madera y hay que dejar un centímetro de separación entre las superficies. No las pegues aún.
@@ -416,16 +433,37 @@ Usaremos las siguientes piezas. Medidas en centímetros.
 
 Si dispones de dos pliegos A3, puedes seguir el siguiente esquema; aunque seguramente haya otra forma mejor.
 ![Disposición 2 A3](https://i.imgur.com/QVDZ0mP.png)
+
 Si tienes un pliego A2, la siguiente es la mejor distribución.
-![enter image description here](https://i.imgur.com/McOVr2F.png)
+
+![Disposicion 1 A2](https://i.imgur.com/McOVr2F.png)
+
 Si quieres usar pliegos A4, diviértete jugando al Tetris.
 
 En mi caso, usaré dos pantallas, colocaré unas bisagras para hacer un mecanismo tipo Nintendo DS. Esto es totalmente adicional, el software dispone de una versión que solo utiliza una pantalla.
 
-Antes de pegar nada, es conveniente que imprimas la siguiente plantilla para marcar las perforaciones necesarias.
-//Adjuntar las plantillas
+Antes de pegar nada, es conveniente que imprimas la siguiente plantilla para marcar las perforaciones necesarias. Está en A4 tamaño real, respetando margenes y a 300 ppx.
+![Guia taladro ](https://i.imgur.com/rnHZTsq.png)
 
 Las conexiones del arduino están detalladas en su sección. El resto de cables requieren perforar las paredes.
 
 Con los agujeros hechos, inserta cada componente y asegúralo con las tuercas que traen. No olvides los altavoces, los cables de audio, ni el hub USB. Para unir las caras, usa pegamento termo-fusible y escuadras. Pega la protoboard en una lateral y haz los agujeros para el power bank.
+
+No hace falta que colques la tapa inferior; y si lo haces, pon visagras y un mecanismo de cierre. Como todo está pegado, es dificil que se caigan piezas.
+
+Estas imagenes te ayudarán a visualizar el resultado final:
+![Vista mando](https://i.imgur.com/wqgfHIa.png)
+
+Aquí puedes ver la disposición de los controles.
+![Vista mando top](https://i.imgur.com/1izCW16.png)
+
+En el aldo izquierdo se situan los controles de audio así como salidas auxiliares.
+![Vista mando izquierda](https://i.imgur.com/zvYWcgm.png)
+
+En el lado derecho están los controles de velocidad, sensivilidad y volumen. Adicionalmente hay un hub USB y unos altavoces a cada lado.
+![Vista mando derecha](https://i.imgur.com/y4NQ0ha.png)
+
+Esta disposición es la más lógica que he encotnrado.
+Entre los altavoces y el powerbank se rellena el final (sí, es un mal diseño que el centro de masas esté arriba, pero los joysticks son demasiado grandes) La protoboard está pegada a la pared izquierda y la protoboard al principio, para hacerlas accesibles.
+![Disposicion componentes](https://i.imgur.com/HuEq91r.png)
 
