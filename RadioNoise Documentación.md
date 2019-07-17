@@ -112,7 +112,7 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 4 | NO SE USA |
 
 ### RPI 3 -> Arduino Vehículo
-Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El tamaño del buffer es de 10 bytes.
+Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El tamaño del buffer es de 15 bytes.
 
 | Posición | Uso |
 |--|--|
@@ -121,23 +121,66 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 2 | Potencia Rueda 2 |
 | 3 | Potencia Rueda 3 |
 | 4 | Potencia Rueda 4 |
-| 5 | LED Azul Modulo Controller |
-| 6 | LED Azul Modulo Video |
-| 7 | LED Azul Modulo Audio IN |
-| 8 | LED Azul Modulo Audio OUT |
-| 9 | NO SE USA |
+| 5 | Sentido Rueda 1 |
+| 6 | Sentido Rueda 2 |
+| 7 | Sentido Rueda 3 |
+| 8 | Sentido Rueda 4 |
+| 9 | LED Azul Modulo Controller |
+| 10 | LED Azul Modulo Video |
+| 11 | LED Azul Modulo Audio IN |
+| 12 | LED Azul Modulo Audio OUT |
+| 13 | NO SE USA |
+| 14 | NO SE USA |
 
 ### RPI 4 mando <-> RPI 3 vehículo
 A continuación los procesos de comunicación de los diferentes módulos.
 #### Controller
-Se realiza en intervalos objetivos de 10ms.
+Se realiza en intervalos objetivos de 10 ms.
 Comienza hablando el cliente. Si no se recibe respuesta antes del timeout la conexión se da por perdida.
+
+#### RPI4 Mando -> RPI3 Verhiculo
+El mando envía 18 bytes.
+
+| Posición | Uso |
+|--|--|
+| 0 | Potencia Rueda 1 |
+| 1 | Potencia Rueda 2 |
+| 2 | Potencia Rueda 3 |
+| 3 | Potencia Rueda 4 |
+| 4 | Sentido Rueda 1 |
+| 5 | Sentido Rueda 2 |
+| 6 | Sentido Rueda 3 |
+| 7 | Sentido Rueda 4 |
+| 8 | Toggle AudioIN |
+| 9 | Toggle AudioOUT |
+| 10 | Toggle Video |
+| 11 | Claxon |
+| 12 | Angulo vista Z |
+| 13 | Angulo vista Y |
+| 14 | Potencia claxon |
+| 15 | Potencia audio |
+| 16 | NO SE USA |
+| 17 | NO SE USA |
+
+#### RPI3 Verhiculo -> RPI4 Mando
+El vehículo envía 5 bytes.
+
+| Posición | Uso |
+|--|--|
+| 0 | Voltaje batería 1 |
+| 1 | Voltaje batería 2 |
+| 2 | Voltaje baterias |
+| 3 | Voltaje pilas |
+| 4 | NO SE USA |
+
 #### Video
 Una vez se establece la conxión el servidor toma 10 fotografías por segundo de 640x480, primero envía el tamaño del frame comprimido con jpeg (usando 4 bytes) y luego envía el frame completo en un solo paquete. El cliente las recibe y muestra por pantalla.
 #### Audio IN y OUT
 El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segundo. El tamaño del buffer es de 1024 bytes.
+
 ## Descripción de hardware
 //Crear y adjuntar modelos creados con software especifico. Y que no se te olviden las tablas del pinout de arduino.
+
 ### Pinout Arduino Mega mando
 
 | Pin y modo | Uso |
@@ -199,8 +242,8 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | A 14 IN | Tensión Batería 2 (12v) |
 | A 13 IN | Tensión Motores (24v) |
 | A 12 IN | Tensión Servos (6v) |
-| D 22 OUT | Control Servo cámara Z |
-| D 24 OUT | Control Servo cámara Y |
+| D 7 OUT | Control Servo cámara Z |
+| D 6 OUT | Control Servo cámara Y |
 | D 26 OUT | LED Azul Module Controller |
 | D 28 OUT | LED Azul Module Video |
 | D 30 OUT | LED Azul Module Audio IN |

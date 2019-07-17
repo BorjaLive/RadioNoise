@@ -19,18 +19,21 @@ public class module_controller extends module{
     
     /*
         DATOS ENVIADOS
-        2 3
-        0 1 : Potencia rudeas
-        4 5 6 : Toggle AudioOUT AudioIN Video
-        7 : Claxon
-        8 9 : Posicion vista X Y
-        10 11 : Potencia claxon y audio
-        12, ..., 14 : No SE USA
+        0, 1 : Voltaje Baterñias 1 y 2
+        2 : Voltaje Baterias juntas
+		3 : Voltaje Pilas
+        4 : No SE USA
     
         DATOS RECIVIDOS
         2 3
-        0 1 : Voltaje bateria ruedas
-        4 : No SE USA
+        0 1 : Potencia rudeas
+        6 7
+        4 5 : Sentido rudeas
+        8 9 10 : Toggle AudioIN AudioOUT Video
+        11 : Claxon
+        12 13 : Posicion vista Z Y
+        14 15 : Potencia claxon y audio
+        16, ..., 17 : No SE USA
         
     */
     

@@ -98,8 +98,13 @@ void setup() {
   pinMode(PIN_LED_rojo_modulo_audioIN, OUTPUT);
   pinMode(PIN_LED_rojo_modulo_audioOUT, OUTPUT);
 
+  Serial.begin(PORT_SPEED);
+  Serial.setTimeout(50);
+  
   digitalWrite(PIN_Ready, HIGH);
 }
+
+byte buffIN[BYTES_IN];
 
 void loop() {
   int rueda_1 = digitalRead(PIN_Rueda_1);
