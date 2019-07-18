@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import radionoisecontroller.Controller;
 
@@ -23,11 +24,29 @@ public class module_audioIN extends module{
     @Override
     public void run() {
         try {
+            Mixer mixer = null;
+            Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+            if(mixerInfos == null){
+                Controller.reportDie(getClass());
+                return;
+            }else{
+                int i = 0;
+                while(mixer == null && i <  mixerInfos.length){
+                    if(mixerInfos[i].getName().equals(DEVICE_AUDIO_OUT))
+                        mixer = AudioSystem.getMixer(mixerInfos[i]);
+                    i++;
+                }
+            }
+            if(mixer == null){
+                Controller.reportDie(getClass());
+                return;
+            }
+            
             SourceDataLine speakers;
 
             AudioFormat format = new AudioFormat(44100.0f, 16, 1, true, true);
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
-            speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+            speakers = (SourceDataLine) mixer.getLine(dataLineInfo);
             speakers.open(format);
             speakers.start();
 
@@ -35,7 +54,7 @@ public class module_audioIN extends module{
             int tryes = CONNECTION_RETRYS;
             System.out.println("Me conecto por: "+AUDIOIN_PORT);
             while(tryes-- > 0 && !cliente.check() && !interrupted())
-                cliente.connect(SERVER_IP, AUDIOIN_PORT, 1000);
+                cliente.connect(SERVER_IP, AUDIOIN_PORT, CONNECTION_RETRYS);
 
             if(cliente.check())
                 state = 2;

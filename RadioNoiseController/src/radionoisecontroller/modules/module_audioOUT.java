@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 import radionoisecontroller.Controller;
 
@@ -28,6 +29,25 @@ public class module_audioOUT extends module{
     @Override
     public void run() {
         try {
+            Mixer mixer = null;
+            Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+            if(mixerInfos == null){
+                Controller.reportDie(getClass());
+                return;
+            }else{
+                int i = 0;
+                while(mixer == null && i <  mixerInfos.length){
+                    if(mixerInfos[i].getName().equals(DEVICE_AUDIO_IN))
+                        mixer = AudioSystem.getMixer(mixerInfos[i]);
+                    i++;
+                }
+            }
+            if(mixer == null){
+                Controller.reportDie(getClass());
+                return;
+            }
+            
+            
             servidor.iniciate(AUDIOOUT_PORT);
             System.out.println("Servidor iniciado");
             
@@ -61,7 +81,10 @@ public class module_audioOUT extends module{
                             break;
                     }
                 }
-                try {sleep(5);} catch (InterruptedException ex) {break;}
+                try {sleep(5);} catch (InterruptedException ex) {
+                    Controller.reportDie(getClass());
+                    return;
+                }
                 System.out.println("El servidor se ha desconectado");                
                 servidor.disconnect();
             }

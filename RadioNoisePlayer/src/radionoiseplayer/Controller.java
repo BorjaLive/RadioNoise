@@ -29,7 +29,6 @@ public class Controller {
     private static module_video video;
     private static module_audioIN audioIN;
     private static module_audioOUT audioOUT;
-    private static module_wifi wifi;
     
     private static SerialPort port;
     
@@ -151,10 +150,6 @@ public class Controller {
             audioOUT.interrupt();
             audioOUT = null;
         }
-        if(wifi != null){
-            wifi.interrupt();
-            wifi = null;
-        }
     }
     
     
@@ -176,7 +171,6 @@ public class Controller {
         else if(c == module_video.class) video = null;
         else if(c == module_audioIN.class) audioIN = null;
         else if(c == module_audioOUT.class) audioOUT = null;
-        else if(c == module_wifi.class) wifi = null;
    }
     
     /*

@@ -114,8 +114,8 @@ public class TCPserver {
             if(readen == size){
                 return true;
             }else if(nullRest != 0){
-                    recive(data, pos+readen, size-readen, nullRest);
                     try{Thread.sleep(1);} catch (InterruptedException ex) {}
+                    return recive(data, pos+readen, size-readen, nullRest);
             }else{
                 System.err.println("SERVIDOR TCP: No se pudo recivir, limite de intentos sobrepasado");
                 return false;
@@ -125,7 +125,6 @@ public class TCPserver {
             System.err.println("SERVIDOR TCP: No se pudo recivir");
             return false;
         }
-        return true;
     }
     
     public boolean check(){

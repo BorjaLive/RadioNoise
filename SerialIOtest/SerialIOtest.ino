@@ -1,5 +1,5 @@
 #define PORT_SPEED 9600
-#define BYTES_IN 20
+#define BYTES_IN 22
 #define BYTES_OUT 35
 
 #define PIN_1 8

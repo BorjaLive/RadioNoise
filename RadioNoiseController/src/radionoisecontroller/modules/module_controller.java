@@ -52,7 +52,7 @@ public class module_controller extends module{
         state = 1;
         int tryes = CONNECTION_RETRYS;
         while(tryes-- > 0 && !cliente.check() && !interrupted())
-            cliente.connect(SERVER_IP, CONTROL_PORT, 100);
+            cliente.connect(SERVER_IP, CONTROL_PORT, CONNECTION_RETRYS);
         
         if(cliente.check())
             state = 2;

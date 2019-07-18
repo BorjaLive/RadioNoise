@@ -17,7 +17,12 @@ public class global {
     public static final int IMAGE_BUFFER_SIZE = 60*1024, AUDIO_BUFFER_SIZE = 1024, AUDIO_CHUNK_SIZE = 1024;
     public static final int VIDEO_FRAMERATE = 10;
     
-    public static int CONNECTION_RETRYS = 5;
-    public static int TICKS_PER_BLINK = 5;
+    public static final int CONNECTION_RETRYS = 5;
+    public static final int TICKS_PER_BLINK = 5;
+    
+    public static final String DEVICE_AUDIO_IN = "CAMERA [plughw:2,0]";
+    public static final String DEVICE_AUDIO_OUT = "Audio [plughw:1,0]";
+    //public static final String DEVICE_AUDIO_IN = "";
+    //public static final String DEVICE_AUDIO_OUT = "";
     
 }

@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
 public class module_audioOUT extends module{
@@ -21,6 +22,22 @@ public class module_audioOUT extends module{
     @Override
     public void run() {
         try {
+            Mixer mixer = null;
+            Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+            if(mixerInfos == null){
+                return;
+            }else{
+                int i = 0;
+                while(mixer == null && i <  mixerInfos.length){
+                    if(mixerInfos[i].getName().equals(DEVICE_AUDIO_IN))
+                        mixer = AudioSystem.getMixer(mixerInfos[i]);
+                    i++;
+                }
+            }
+            if(mixer == null){
+                return;
+            }
+            
             servidor.iniciate(AUDIOOUT_PORT);
             System.out.println("Servidor iniciado");
             

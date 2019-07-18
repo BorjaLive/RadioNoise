@@ -30,7 +30,7 @@ public class TCPclient {
             //Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("CLIENTE TCP: No se pudo conectar");
             timeout--;
-            try{Thread.sleep(1);} catch (InterruptedException e) {}
+            try{Thread.sleep(10);} catch (InterruptedException e) {}
             if(timeout != 0) return connect(ip, port, timeout);
         }
         return false;
@@ -78,7 +78,7 @@ public class TCPclient {
                 return true;
             }else if(timeout != 0){
                     try{Thread.sleep(1);} catch (InterruptedException ex) {}
-                    recive(data, pos+readen, size-readen, timeout);
+                    return recive(data, pos+readen, size-readen, timeout);
             }else{
                 System.err.println("CLIENTE TCP: No se pudo recivir, limite de intentos sobrepasado");
                 return false;
@@ -88,7 +88,6 @@ public class TCPclient {
             System.err.println("CLIENTE TCP: No se pudo recivir");
             return false;
         }
-        return true;
     }
     
     public boolean check(){
