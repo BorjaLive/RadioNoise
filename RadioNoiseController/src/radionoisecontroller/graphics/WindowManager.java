@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import radionoisecontroller.Controller;
 
 public class WindowManager {
     private final MultiWindow windows;
@@ -27,7 +28,8 @@ public class WindowManager {
     }
     
     public void act(byte[] cutState, byte[] pastState, byte[] recive){
-        test.setPower((byte)(cutState[1]==1?255:128));
+        //test.setPower((byte)(cutState[1]==1?255:128));
+        test.setPower(Controller.wlan_quality);
         
         switch (videoChanged) {
             case 1:

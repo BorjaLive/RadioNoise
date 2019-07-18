@@ -43,7 +43,7 @@ public class Controller {
     private static module_wifi wifi;
     
     private static SerialPort port;
-    public static int wlan_strength;
+    public static int wlan_quality, wlan_signal;
     
     private static byte[] outBuffer = new byte[BYTES_OUT];
     private static byte[] recvData, sendData;
@@ -60,7 +60,7 @@ public class Controller {
         
         WM = null;
         
-        wlan_strength = -1;
+        wlan_quality = -1;
         
         return true;
     }
@@ -99,9 +99,10 @@ public class Controller {
     public static void act(){
         System.arraycopy(curState, 0, pasState, 0, curState.length);
         outBuffer[0] = (byte)3;
-        data_exchange(outBuffer, curState);
+        //data_exchange(outBuffer, curState);
         
         //TODO: Toda la logica
+        curState[8] = (byte)1;
         
         //Iniciar e interrumpir modulos
         if(curState[2] == 0 && controller != null){
@@ -181,7 +182,7 @@ public class Controller {
         
         
         outBuffer[0] = (byte)2;
-        port.writeBytes(outBuffer, BYTES_OUT);
+        //port.writeBytes(outBuffer, BYTES_OUT);
         //System.out.println(Arrays.toString(curState));
     }
     

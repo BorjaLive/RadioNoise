@@ -6,15 +6,16 @@ public class global {
     public static final int BAUD_SPEED = 9600;
     //static String ARDUINO_PORT = "/dev/ttyACM0";
     public static final String ARDUINO_PORT = "COM4";
-    public static final boolean ARDUINO_OVERRIDE = false;
+    public static final boolean ARDUINO_OVERRIDE = true;
     public static final int BYTES_IN = 35, BYTES_OUT = 22;
     
     //public static final String SERVER_IP = "192.168.1.5";
     public static final String SERVER_IP = "localhost";
     public static final String WLAN_INTERFACE_WIN = "TL-WN727N";
     public static final String WLAN_PROFILE_WIN = "RadioNoise";
+    public static final String WLAN_INTERFACE_LINUX = "wlan1";
     public static final int WLAN_SCANDELAY = 250;
-    public static final int WLAN_SCANTIMEOUT = 16;
+    public static final int WLAN_SCANTIMEOUT = 100;
     public static final int CONTROL_PORT = 4421;
     public static final int VIDEO_PORT = 4422;
     public static final int AUDIOIN_PORT = 4423;
@@ -55,8 +56,9 @@ public class global {
     public static final int[] COLOR_PURPLE = new int[]{255, 0, 255};
     public static final int[] COLOR_WHITE = new int[]{255, 255, 255};
     
+    public static final String RESOURCES = "/home/pi/Desktop/RadioNoise/RadioNoiseController/src/radionoisecontroller/graphics/resources/";
     //public static final String RESOURCES = "/home/arlin/Escritorio/RadioNoise/RadioNoiseController/src/radionoisecontroller/graphics/resources/";
-    public static final String RESOURCES = "C:\\Users\\Margaret\\Desktop\\RadioNoise\\RadioNoiseController\\src\\radionoisecontroller\\graphics\\resources\\";
+    //public static final String RESOURCES = "C:\\Users\\Margaret\\Desktop\\RadioNoise\\RadioNoiseController\\src\\radionoisecontroller\\graphics\\resources\\";
     
     public static Texture StreamImage;
     
