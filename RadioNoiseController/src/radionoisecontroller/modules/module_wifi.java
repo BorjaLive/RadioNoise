@@ -24,10 +24,11 @@ public class module_wifi extends module{
             while(!interrupted() && consecutiveFails < WLAN_SCANTIMEOUT){
                 String data = executeGet("netsh wlan show interfaces");
                 
-                if(data == null)
+                if(data == null || data.isEmpty() || data.contains("No disponible"))
                     calidad = -1;
                 else{
                     //Venga ese parser
+                    System.out.println(data);
                     data = data.substring(data.indexOf(WLAN_INTERFACE_WIN));
                     if(data.contains("Nombre"))
                         data = data.substring(0, data.indexOf("Nombre"));

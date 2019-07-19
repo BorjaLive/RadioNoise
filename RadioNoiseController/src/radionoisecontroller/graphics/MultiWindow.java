@@ -3,6 +3,8 @@ package radionoisecontroller.graphics;
 import static radionoisecontroller.global.*;
 import java.io.InputStream;
 import java.util.ArrayList;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.PointerBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -46,9 +48,11 @@ public class MultiWindow extends Thread{
         int[] monitorX = new int[1];
         int[] monitorY = new int[1];
         
+        PointerBuffer monitors = glfwGetMonitors();
+        
         for (int i = 0; i < windows.length; i++) {
-            if(glfwGetMonitors().sizeof() <= i)
-                glfwGetMonitorPos(glfwGetMonitors().get(i), monitorX, monitorY);
+            if(monitors.capacity() > i)
+                glfwGetMonitorPos(monitors.get(i), monitorX, monitorY);
 
             long handle = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "CTRLcontroller", NULL, NULL);
             if (handle == NULL) {

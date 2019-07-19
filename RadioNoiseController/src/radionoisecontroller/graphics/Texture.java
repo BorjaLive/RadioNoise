@@ -53,6 +53,7 @@ public class Texture {
         BufferedImage bi;
         try {
             InputStream stream;
+            System.out.println("FILE: "+(new File(file)).toString());
             stream = new FileInputStream(new File(file));
             bi = ImageIO.read(stream);
             int width = bi.getWidth();

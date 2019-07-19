@@ -28,6 +28,9 @@ public class global {
     
     public static final int CONNECTION_RETRYS = 20;
     public static final int TICKS_PER_BLINK = 5;
+    public static final int BLINK_DURATION = 10*TICKS_PER_BLINK;
+    public static final int STALL_UMBRAL = 2, DIGITAL_HUMBRAL = 63;
+    public static final float SENSIBILIDY_CONSTANT = 0.1f;
     
     //public static final String DEVICE_AUDIO_IN = "CAMERA [plughw:2,0]";
     //public static final String DEVICE_AUDIO_OUT = "Audio [plughw:1,0]";
@@ -56,10 +59,24 @@ public class global {
     public static final int[] COLOR_PURPLE = new int[]{255, 0, 255};
     public static final int[] COLOR_WHITE = new int[]{255, 255, 255};
     
-    public static final String RESOURCES = "/home/pi/Desktop/RadioNoise/RadioNoiseController/src/radionoisecontroller/graphics/resources/";
-    //public static final String RESOURCES = "/home/arlin/Escritorio/RadioNoise/RadioNoiseController/src/radionoisecontroller/graphics/resources/";
-    //public static final String RESOURCES = "C:\\Users\\Margaret\\Desktop\\RadioNoise\\RadioNoiseController\\src\\radionoisecontroller\\graphics\\resources\\";
+    public static final String RESOURCES = (RadioNoiseController.class.getResource("graphics/resources").toString()+"\\").substring(6);
     
     public static Texture StreamImage;
     
+    public static int LETTER_SPACING = 48;
+    public static int LETTER_SHIFT = 32;
+    
+    
+    
+    
+    
+    public static byte float2byte(float f){
+        return (byte)(f*256.0);
+    }
+    public static int byte2int(byte b){
+        return ((int)b)+128;
+    }
+    public static float byte2float(byte b){
+        return ((float)byte2int(b)/255.0f);
+    }
 }
