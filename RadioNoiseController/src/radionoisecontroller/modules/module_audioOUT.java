@@ -102,4 +102,7 @@ public class module_audioOUT extends module{
     public void setEnabled(boolean e){
         enabled = e;
     }
+    public boolean getEnabled(){
+        return enabled;
+    }
 }

@@ -13,6 +13,11 @@ public class RadioNoiseController {
             System.err.println("No se pudo conectar con Arduino.");
         }else{
             System.out.println("Conexion con Arduino correcta.");
+            if(CUSTOM_AUDIO_DEVICE){
+                Controller.setAudioInterface();
+                while(CUSTOM_AUDIO_DEVICE) sleep(CTRL_DELAY);
+            }
+            System.out.println("CONINUED");
             MultiWindow windows = new MultiWindow(2);
             windows.start();
             

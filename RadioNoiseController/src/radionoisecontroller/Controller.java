@@ -1,12 +1,24 @@
 package radionoisecontroller;
 
 import com.fazecast.jSerialComm.SerialPort;
+import static java.awt.Component.CENTER_ALIGNMENT;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import radionoisecontroller.modules.*;
 import static radionoisecontroller.global.*;
 import radionoisecontroller.graphics.WindowManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Arrays;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 
 public class Controller {
     private static byte[] curState = new byte[BYTES_IN], pasState = new byte[BYTES_IN]; //TODO: declararlos en el iniciate
@@ -29,13 +41,14 @@ public class Controller {
     private static int[] blink;
     private static int servoZ, servoY;
     
-    public static boolean initiate(){
+    public static void initiate(){
         sendData = new byte[BYTES_SEND];
         recvData = new byte[BYTES_RECIVE];
         
         WM = null;
         
-        wlan_quality = -1;
+        wlan_quality = 0;
+        wlan_signal = 0;
         
         //Variables de conduccion
         burnOutMain = false;
@@ -44,8 +57,7 @@ public class Controller {
         for(int i = 0; i < BYTES_OUT; i++){
             blink[i] = -1;
         }
-        
-        return true;
+        servoZ = servoY = 90;
     }
     
     public static boolean arduinoTest(){
@@ -82,7 +94,7 @@ public class Controller {
     public static void act(){
         System.arraycopy(curState, 0, pasState, 0, curState.length);
         outBuffer[0] = (byte)3;
-        //data_exchange(outBuffer, curState);
+        data_exchange(outBuffer, curState);
         
         //TODO: Toda la logica
         curState[8] = (byte)1;
@@ -143,17 +155,16 @@ public class Controller {
         
         
         //Actualizar pantallas
-        WM.act(curState, pasState, recvData);
-        
+        WM.act(audioIN!=null&&audioIN.check()==2, audioOUT!=null&&audioOUT.check()==2, video!=null&&video.check()==2, controller!=null&&controller.check()==2, wifi!=null&&wifi.check()==2, audioOUT!=null&&audioOUT.getEnabled(), wlan_signal, wlan_quality, curState[26], curState[27], recvData[2], recvData[3], curState[24], curState[18]);
         
         
         outBuffer[0] = (byte)2;
-        //port.writeBytes(outBuffer, BYTES_OUT);
-        //System.out.println(Arrays.toString(curState));
+        port.writeBytes(outBuffer, BYTES_OUT);
+        System.out.println(Arrays.toString(curState));
     }
     
     public static boolean should_continue(){
-        return curState[BYTES_IN-1] == 0;
+        return curState[28] == 0;
     }
     
     public static void stop(){
@@ -199,8 +210,8 @@ public class Controller {
         }
         port.readBytes(inBuffer, inBuffer.length);
     }
-     
-   public static void reportDie(Class c){
+    
+    public static void reportDie(Class c){
         if(c == module_controller.class) controller = null;
         else if(c == module_video.class) video = null;
         else if(c == module_audioIN.class) audioIN = null;
@@ -250,7 +261,7 @@ public class Controller {
         //Potencia de las ruedas
         //Empeza con la potencia coarse
         float powerW1, powerW2, powerW3, powerW4;
-        powerW1 = powerW2 = powerW3 = powerW4 = ((float)curState[24] + 128.0f)/255.0f;  //Potencia coarse
+        powerW1 = powerW2 = powerW3 = powerW4 = byte2float(curState[24]);  //Potencia coarse
         if(tanque){ //Conduccion modo tanque, ocho direcciones
             boolean powerD, powerI, dirD, dirI;
             int x, y;
@@ -430,6 +441,9 @@ public class Controller {
         if(curState[21] < STALL_UMBRAL || curState[21] > STALL_UMBRAL)
             servoY += curState[21]*byte2float(curState[25])*SENSIBILIDY_CONSTANT;
         
+        if(servoZ > 180) servoZ = 180;
+        if(servoY > 180) servoY = 180;
+        
         sendData[12] = (byte)servoZ;
         sendData[13] = (byte)servoY;
         
@@ -481,7 +495,6 @@ public class Controller {
             outBuffer[19] = 1;
             outBuffer[20] = 0;
         }
-        //TODO: Los LEDs de los modulos
         //Modulos. Si es null o el estado es 0 se enciente en rojo, si el estado es 1 parpadea el rojo, si el estado es 2 se queda fijo el verde
         if(wifi == null || wifi.check() == 0){
             outBuffer[9] = 0;
@@ -546,8 +559,84 @@ public class Controller {
                 else blink[i]++;
             }
         }
+        
+        //Claxon
+        sendData[11] = curState[16]; //Activo
+        sendData[14] = curState[23]; //Potencia
+        
+        //Volumen
+        sendData[15] = curState[27]; //El volumen del vehículo
+        if(audioIN != null && pasState[26] != curState[26])
+            audioIN.setVolume(byte2float(curState[26]));    //Volumen propio
+        
     }
     
+    public static void setAudioInterface(){
+        String[] devices;
+        Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+        if(mixerInfos == null){
+            CUSTOM_AUDIO_DEVICE = false;
+            return;
+        }else{
+            devices = new String[mixerInfos.length];
+            for (int i = 0; i < mixerInfos.length; i++)
+                devices[i] = mixerInfos[i].getName();
+        }
+                
+        
+        
+        JFrame frame = new JFrame("frame");
+        JPanel panel =new JPanel(); 
+        panel.setLayout(null);
+        
+        JLabel label1 = new JLabel("Dispositivo de salida", (int) CENTER_ALIGNMENT);
+        label1.setLocation(10, 10);
+        label1.setSize(280, 20);
+        label1.setFont(new Font("Courier", 0, 26));
+        JLabel label2 = new JLabel("Dispositivo de entrada", (int) CENTER_ALIGNMENT);
+        label2.setLocation(310, 10);
+        label2.setSize(280, 20);
+        label2.setFont(new Font("Courier", 0, 26));
+        
+        String week[]= { "Monday","Tuesday","Wednesday", 
+                         "Thursday","Friday","Saturday","Sunday"}; 
+        
+        JList list1 = new JList(devices);
+        list1.setLocation(15, 45);
+        list1.setSize(270, 250);
+        list1.setFont(new Font("Verdana", 0, 18));
+        JList list2 = new JList(devices);
+        list2.setLocation(315, 45);
+        list2.setSize(270, 250);
+        list2.setFont(new Font("Verdana", 0, 18));
+        
+        JButton button = new JButton("Seleccionar");
+        button.setLocation(200, 310);
+        button.setSize(200, 50);
+        
+        panel.add(label1);
+        panel.add(label2);
+        panel.add(list1);
+        panel.add(list2);
+        panel.add(button);
+   
+        frame.add(panel); 
+        frame.setSize(600,400); 
+        
+        button.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DEVICE_AUDIO_OUT = (String)list1.getSelectedValue();
+                DEVICE_AUDIO_IN = (String)list2.getSelectedValue();
+                CUSTOM_AUDIO_DEVICE = false;
+                
+                frame.setVisible(false);
+                frame.dispose();
+            }
+         });
+        
+        frame.setVisible(true);
+    }
     
     private static byte not(byte b){
         return (byte)(b==1?0:1);

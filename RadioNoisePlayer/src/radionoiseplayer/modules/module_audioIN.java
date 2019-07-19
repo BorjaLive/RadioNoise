@@ -6,6 +6,7 @@ import static java.lang.Thread.interrupted;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
@@ -13,11 +14,13 @@ import javax.sound.sampled.SourceDataLine;
 public class module_audioIN extends module{
     private TCPclient cliente;
     private byte[] recvBuffer_size, recvBuffer_audio;
+    FloatControl volume;
     
     public module_audioIN(){
         cliente = new TCPclient();
         recvBuffer_size = new byte[4];
         recvBuffer_audio = new byte[AUDIO_BUFFER_SIZE];
+        volume = null;
     }
     
     @Override
@@ -46,6 +49,8 @@ public class module_audioIN extends module{
             speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
             speakers.open(format);
             speakers.start();
+            
+            volume = (FloatControl)speakers.getControl(FloatControl.Type.VOLUME);
 
             state = 1;
             int tryes = CONNECTION_RETRYS;
@@ -69,5 +74,10 @@ public class module_audioIN extends module{
             //Logger.getLogger(audio_reciver.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("ERROR AL OPTENER EL DISPOSITIVO DE REPRODUCCION");
         }
+    }
+    
+    public void setVolume(float v){
+        if(volume != null)
+            volume.setValue(v);
     }
 }

@@ -10,12 +10,12 @@ public abstract class Shape {
     
     protected final float[][] vertex;
     protected final int mode;
-    protected int[] color;
+    protected float[] color;
     protected int x, y;
     protected float xR, yR;
     protected float scaleX, scaleY;
     
-    public Shape(float[][] vertex, int mode, int[] color, float scaleX, float scaleY, int x, int y){
+    public Shape(float[][] vertex, int mode, float[] color, float scaleX, float scaleY, int x, int y){
         this.color = color;
         this.mode = mode;
         this.scaleX = scaleX;
@@ -36,7 +36,7 @@ public abstract class Shape {
         yR = -((y-(WINDOW_HEIGHT/2))/(float)(WINDOW_HEIGHT/2));
     }
     
-    public final void setColor(int[] c){
+    public final void setColor(float[] c){
         color = c;
     }
     

@@ -15,9 +15,7 @@ public class module_controller extends module{
 
     private TCPclient cliente;
     
-    private byte[] send, recv, recvTMP;
-    
-    private int timeout_tries;
+    private byte[] send, recv;
     
     /*
         DATOS ENVIADOS
@@ -43,16 +41,14 @@ public class module_controller extends module{
         cliente = new TCPclient();
         send = sendBuffer;
         recv = reciveBuffer;
-        timeout_tries = 0;
     }
     
     @Override
     public void run() {
         //Intentar conectarse
         state = 1;
-        int tryes = CONNECTION_RETRYS;
-        while(tryes-- > 0 && !cliente.check() && !interrupted())
-            cliente.connect(SERVER_IP, CONTROL_PORT, CONNECTION_RETRYS);
+        
+        cliente.connect(SERVER_IP, CONTROL_PORT, CONNECTION_RETRYS);
         
         if(cliente.check())
             state = 2;
