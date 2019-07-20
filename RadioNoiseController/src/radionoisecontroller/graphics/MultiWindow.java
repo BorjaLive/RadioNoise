@@ -3,6 +3,8 @@ package radionoisecontroller.graphics;
 import static radionoisecontroller.global.*;
 import java.io.InputStream;
 import java.util.ArrayList;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.PointerBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -46,9 +48,12 @@ public class MultiWindow extends Thread{
         int[] monitorX = new int[1];
         int[] monitorY = new int[1];
         
+        PointerBuffer monitors = glfwGetMonitors();
+        
         for (int i = 0; i < windows.length; i++) {
-            if(glfwGetMonitors().sizeof() <= i)
-                glfwGetMonitorPos(glfwGetMonitors().get(i), monitorX, monitorY);
+            if(monitors.capacity() > i)
+                glfwGetMonitorPos(monitors.get(i), monitorX, monitorY);
+            else monitorY[0] += 460;
 
             long handle = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "CTRLcontroller", NULL, NULL);
             if (handle == NULL) {
@@ -59,9 +64,13 @@ public class MultiWindow extends Thread{
 
             glfwMakeContextCurrent(handle);
             window.capabilities = GL.createCapabilities();
+            
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            
             load(i);
 
-            glClearColor((i & 1), (i >> 1), (i == 1) ? 0.f : 1.f, 0.f);
+            glClearColor(0f, 0f, 0f, 0.f);
 
             glfwShowWindow(handle);
             glfwSetWindowPos(handle, monitorX[0], monitorY[0]);
@@ -76,7 +85,6 @@ public class MultiWindow extends Thread{
         SyncTimer timer = new SyncTimer(30);
         
         while(!interrupted()){
-
             while(!queue.isEmpty()){
                 Window window = windows[queue.get(0).windowNumber];
                 if (window == null) {
@@ -135,10 +143,32 @@ public class MultiWindow extends Thread{
     
     private void load(int i){
         switch(i){
-            case 0:
+            case 0: //Cosas de la pantalla 1
                 StreamImage = new Texture(RESOURCES+"offline.png");
                 break;
-            case 1:
+            case 1: //Cosas de la pantalla 2
+                texture_audioOUT = new Texture(RESOURCES+"Module_AudioOUT.png");
+                texture_audioIN= new Texture(RESOURCES+"Module_AudioIN.png");
+                texture_video = new Texture(RESOURCES+"Module_Video.png");
+                texture_controller = new Texture(RESOURCES+"Module_Controller.png");
+                texture_wifi = new Texture(RESOURCES+"Module_Wifi.png");
+                texture_audioOUT_active = new Texture(RESOURCES+"Module_AudioOUT_active.png");
+                texture_battery_rechargeable = new Texture(RESOURCES+"battery_rechargeable.png");
+                texture_battery_nonrechargeable = new Texture(RESOURCES+"battery_nonrechargeable.png");
+                texture_alpha_0 = new Texture(RESOURCES+"alpha_0.png");
+                texture_alpha_1 = new Texture(RESOURCES+"alpha_1.png");
+                texture_alpha_2 = new Texture(RESOURCES+"alpha_2.png");
+                texture_alpha_3 = new Texture(RESOURCES+"alpha_3.png");
+                texture_alpha_4 = new Texture(RESOURCES+"alpha_4.png");
+                texture_alpha_5 = new Texture(RESOURCES+"alpha_5.png");
+                texture_alpha_6 = new Texture(RESOURCES+"alpha_6.png");
+                texture_alpha_7 = new Texture(RESOURCES+"alpha_7.png");
+                texture_alpha_8 = new Texture(RESOURCES+"alpha_8.png");
+                texture_alpha_9 = new Texture(RESOURCES+"alpha_9.png");
+                texture_alpha_dBm = new Texture(RESOURCES+"alpha_dBm.png");
+                texture_alpha_dot = new Texture(RESOURCES+"alpha_..png");
+                texture_alpha_minus = new Texture(RESOURCES+"alpha_-.png");
+                texture_alpha_percentaje = new Texture(RESOURCES+"alpha_%.png");
                 break;
         }
     }

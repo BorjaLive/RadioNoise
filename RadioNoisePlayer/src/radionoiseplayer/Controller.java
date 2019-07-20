@@ -35,8 +35,6 @@ public class Controller {
     private static byte[] outBuffer = new byte[BYTES_OUT];
     private static byte[] recvData, sendData;
     
-    private static int counter = 0;
-    
     public static boolean initiate(){
         sendData = new byte[BYTES_SEND];
         recvData = new byte[BYTES_RECIVE];
@@ -110,16 +108,9 @@ public class Controller {
         if(recvData[6] == 1 && video == null){
             video = new module_video();
             video.start();
-            System.out.println("VIDEO SERVER START");
         }
         
-        if(recvData[7] == 1){
-            System.out.println("HOLIS "+counter);
-            counter++;
-            recvData[7] = 0;
-        }else{
-            counter = 0;
-        }
+        drive();
         
         
         outBuffer[0] = (byte)2;
@@ -176,7 +167,29 @@ public class Controller {
     /*
         curState son los controles y sendData es la salida
     */
-    
+    private static void drive(){
+        //Enviar los voltajes medidos
+        float voltaje_main = byte2float(curState[0])*VOLTAJE_DIVIDER_CONSTANT, voltaje_servo = byte2float(curState[1])*VOLTAJE_DIVIDER_CONSTANT;
+        sendData[0] = (byte) (((voltaje_main-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN))*255);
+        sendData[1] = (byte) (((voltaje_servo-VOLTAJE_SERVO_MIN)/(VOLTAJE_SERVO_MAX-VOLTAJE_SERVO_MIN))*255);
+        
+        //Movimiento de las ruedas
+        outBuffer[1] = recvData[0];
+        outBuffer[2] = recvData[1];
+        outBuffer[3] = recvData[2];
+        outBuffer[4] = recvData[3];
+        outBuffer[5] = recvData[4];
+        outBuffer[6] = recvData[5];
+        outBuffer[7] = recvData[6];
+        outBuffer[8] = recvData[7];
+        
+        //LEDs de los modulos
+        outBuffer[9] = (byte) (controller == null?0:1);
+        outBuffer[10] = (byte) (video == null?0:1);
+        outBuffer[11] = (byte) (audioIN == null?0:1);
+        outBuffer[12] = (byte) (audioOUT == null?0:1);
+    }
+   
     
     private static byte not(byte b){
         return (byte)(b==1?0:1);

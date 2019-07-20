@@ -1,5 +1,7 @@
 package radionoisecontroller.modules;
 
+import radionoisecontroller.graphics.WindowManager;
+
 public abstract class module extends Thread{
     
     protected int state;

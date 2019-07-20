@@ -21,7 +21,6 @@ public class Image extends Shape{
     
     @Override
     public void draw(){
-        glEnable(GL_TEXTURE_2D);
         texture.bind();
         glBegin(GL_QUADS);
         glColor3f(color[0], color[1], color[2]);
@@ -30,7 +29,7 @@ public class Image extends Shape{
             glVertex2f(xR + vertex[i][0]*scaleX, yR - vertex[i][1]*scaleY);
         }
         glEnd();
-        glDisable(GL_TEXTURE_2D);
+        texture.unbind();
     }
     
     

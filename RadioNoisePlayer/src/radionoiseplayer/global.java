@@ -2,8 +2,8 @@ package radionoiseplayer;
 
 public class global {
     public static int BAUD_SPEED = 9600;
-    static String ARDUINO_PORT = "/dev/ttyACM0";
-    //public static final String ARDUINO_PORT = "COM4";
+    //static String ARDUINO_PORT = "/dev/ttyACM0";
+    public static final String ARDUINO_PORT = "COM4";
     public static final boolean ARDUINO_OVERRIDE = true;
     public static int BYTES_IN = 5, BYTES_OUT = 10;
     
@@ -25,4 +25,19 @@ public class global {
     //public static final String DEVICE_AUDIO_IN = "";
     //public static final String DEVICE_AUDIO_OUT = "";
     
+    public static final float VOLTAJE_MAIN_MIN = 10.08f, VOLTAJE_MAIN_MAX = 12.06f, VOLTAJE_SERVO_MIN = 4.8f, VOLTAJE_SERVO_MAX = 6.48f;
+    public static final float VOLTAJE_DIVIDER_CONSTANT = 11f; //TODO: Modificar con las medidas reales
+    
+    
+    
+    
+    public static byte float2byte(float f){
+        return (byte)(f*256.0);
+    }
+    public static int byte2int(byte b){
+        return (int)(b & 0xFF);
+    }
+    public static float byte2float(byte b){
+        return ((float)byte2int(b)/255.0f);
+    }
 }

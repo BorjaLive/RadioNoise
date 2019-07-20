@@ -53,6 +53,7 @@ public class Texture {
         BufferedImage bi;
         try {
             InputStream stream;
+            //System.out.println("FILE: "+(new File(file)).toString());
             stream = new FileInputStream(new File(file));
             bi = ImageIO.read(stream);
             int width = bi.getWidth();
@@ -68,17 +69,19 @@ public class Texture {
                     int pixel = pixels_raw[i*width + j];
                     pixels.put((byte) ((pixel >> 16) & 0xFF));     // Red component
                     pixels.put((byte) ((pixel >> 8) & 0xFF));      // Green component
-                    pixels.put((byte) (pixel & 0xFF));               // Blue component
-                    pixels.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component. Only for RGBA
+                    pixels.put((byte) (pixel & 0xFF));             // Blue component
+                    pixels.put((byte) ((pixel >> 24) & 0xFF));     // Alpha component. Only for RGBA
                 }
             }
             pixels.flip();
             
+            
+            glEnable(GL_TEXTURE_2D);
             id = glGenTextures();
             glBindTexture(GL_TEXTURE_2D, id);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+            glDisable(GL_TEXTURE_2D);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,6 +126,11 @@ public class Texture {
     }
     
     public void bind(){
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, id);
+    }
+    public void unbind(){
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
     }
 }
