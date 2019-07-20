@@ -21,7 +21,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 public class Controller {
-    private static byte[] curState = new byte[BYTES_IN], pasState = new byte[BYTES_IN]; //TODO: declararlos en el iniciate
+    private static byte[] curState, pasState; //TODO: declararlos en el iniciate
     private static module_controller controller;
     private static module_video video;
     private static module_audioIN audioIN;
@@ -31,7 +31,7 @@ public class Controller {
     private static SerialPort port;
     public static int wlan_quality, wlan_signal;
     
-    private static byte[] outBuffer = new byte[BYTES_OUT];
+    private static byte[] outBuffer;
     private static byte[] recvData, sendData;
     
     private static WindowManager WM;
@@ -42,6 +42,9 @@ public class Controller {
     private static int servoZ, servoY;
     
     public static void initiate(){
+        outBuffer = new byte[BYTES_OUT];
+        curState = new byte[BYTES_IN];
+        pasState = new byte[BYTES_IN];
         sendData = new byte[BYTES_SEND];
         recvData = new byte[BYTES_RECIVE];
         
