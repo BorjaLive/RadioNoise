@@ -23,7 +23,7 @@ Se usará un Arduino Mega en el vehículo y otro en el mando, una RPI 3 en el ve
 
 En software se usará Java como lenguaje de programación con las librerías JavaCV, jSerialComm y LWJGL3. Los programas estarán compuestos por módulos independientes de control. Por el momento estos son. 
 
- - Wifi: Crea el punto de acceso o se conecta a la red.
+ - Wifi: Muestra la intensidad de señal.
  - Controlador: Envía información sobre los módulos y la conducción.
  - Vídeo: Envía capturas de una cámara en el vehículo al mando.
  - Audio IN: Recive audio.
@@ -288,15 +288,100 @@ Descarga primero las librerías jSerialComm, LWjGL3 y JavaCV para ARM. IMPORTANT
 ### Arduino
 Necesitaras descargar su IDE para cargar el código.
 Descarga la versión más reciente para tu sistema operativo en [este enlace](https://www.arduino.cc/en/Main/Software). 
-Abre los archivos ControllerScript y PlayerScript, cargalos en la placa y listo.
-### Raspberyy Pi
+Abre los archivos ControllerScript y PlayerScript, cargalos en la placa Arduino Mega y listo.
+### Raspberry Pi
 Monta la imagen más reciente de Raspbian en tu SD de preferencia, siguiendo los pasos descritos en [esta página](https://www.raspberrypi.org/downloads/raspbian/).
 Comprueba que tienes instalado Java 8, de no ser así, instalalo [así](https://raspberrypi.stackexchange.com/questions/4683/how-to-install-the-java-jdk-on-raspberry-pi).
-Comprueba que tienes Arduino IDE instalado, si no es así; instálalo como si estubieras en un ordenador.
-Comprueba que la tarjeta de red funciona correctamente. Si has decidido usar Alfa AWUS036NH, igual que yo, sigue el siguiente tutoría.
+Comprueba que tienes Arduino IDE instalado, si no es así; instálalo como si estuvieras en un ordenador.
+
+En la Raspberry del vehículo hay que configurar algunos apartados.
+Lo primero es verificar que el adaptador de red funciona, podeis ver una lista de los dispositivos ya probados [aquí](https://elinux.org/RPi_USB_Wi-Fi_Adapters).
+En general, si el chipset de vuestro dispositivo está incluido, debería funcionar. Es posible que requiera controladores non-free, debereis instalarlos a parte. Más información [aquí](https://wiki.debian.org/es/WiFi).
+
+Adicionalmente, quizás te interese aumentar la potencia del adaptador de red. En españa el límite son 100 mW que equivale a 20 dBm, algunos adaptadores admiten más. Claro que no vamos a hacer nada ilegal, si vives en otro país que lo permita, recomiendo subir a 30 dBm; he [aquí](https://www.ceos3c.com/hacking/increase-tx-power-alfa-awus036h/) como.
+
+Por otro lado, el programa necesita interactuar con la tarjeta de red pero eso requiere permisos root. Raspbian incluye al usuario "pi" dentro de los sudoers, lo úno que hay que hacer es permitirle usar "iw" sin necesidad de introducir la contraseña.
+Para ello, introducimos en una terminal "sudo visudo" y agregamos esta linea "pi ALL=(root) NOPASSWD: /sbin/iw", quizas en versiones siguientes cambin la hubicación del comando iw. Para saber dónde está introducir "which iw" y aparece la ruta donde está instalado.
+Si esto no funciona "pi ALL=(ALL) NOPASSWD:ALL" seguro que sí. Aunque no es recomendable.
+
+Segun el estandar IEEE 802.11 el nivel de señal aceptable está comprendido entre -40 dBm y -110 dBm
+Por ello, para obtener la calidad de señal, hacemos "calidad = (señal + 110) * 10 / 7"
+Pongo esto aquí por si tienes otro estandar y quieres cambiar la escala.
+Para obtener la señal usaremos iw.
+Más concretamente "iw dev wlan1 station dump | grep signal:"
+
+Vamos a configurar al Raspberry Pi 3 del coche como punto de acceso, desded ahora, AP.
+Instalamos los programas necesarios con "sudo apt-get install hostapd dnsmasq"
+Uno es para crear el AP y el otro para el servidor DHCP (el que entrega las IPs automaticamente) y el DNS (el que resuelve los dominios)
+Paramos los programas para poder configurarlos "sudo systemctl stop hostapd && sudo systemctl stop dnsmasq"
+Antes vamos a asegurarnos de que nuestra puerta de enlace no se mueve de sitio, entramos en la configuracion "sudo nano /etc/dhcpcd.conf", podeis usar emacs o vi si estais más cómodos, yo prefiero nano.
+Al igual que hicimos con el mando, agregamos en el archivo: 
+
+    interface wlan1
+	static ip_address=192.168.0.1/24
+Suponiendo que vuestro adaptador de red se llame wlan1.
+Para guardar y salir, si estais en lano, Ctrl+O Enter Ctrl+X
+
+Vamos a por el servidor DHCP. Lo principal es que, si se conecta algún listiyo, no interfiera demasiado. Segun nuesto esquema, 192.168.0.1 es el vehículo y 192.168.0.5 es el mando. 
+Para ello hacemos que el rango del servidor DHCP empiece en 192.168.0.10
+Abrimos el archivo "/etc/dnsmasq.conf" con vuestro editor favorito y escribimos:
+
+    interface=wlan1
+	dhcp-range=192.168.0.10,192.168.0.30,255.255.255.0,24h
+
+De nuevo, suponeiendo que wlan1 sea vuestro adaptador.
+
+Luego pondremos la configuración del AP en un archivo de configuración. Este archivo puede estar donde querais y con el nombre que más os guste. Por simplificar usaré este "/etc/hostapd/hostapd.conf"
+Escribimos
+
+    interface=wlan1
+    channel=11
+    driver=nl80211
+    ssid=RadioNoise
+
+Donde la interfaz es, de nuevo, vuestro adaptador de red. El canal, he eligo el 11, porque no suele estar muy poblado; pero va a depender de dónde esteis. El driver es para 802.11n o Wifi 4, así nos aseguramos que es compatible. El ssid es mera estética, le he puesto el nombre del proyecto.
+Ahora le decimos a hostpad donde hemos puesto el archivo modificando "/etc/default/hostapd"
+Agreganis la linea "DAEMON_CONF="/etc/hostapd/hostapd.conf""
+
+Y ya etaría. Es sencillo porque no queremos conexión de puente para compartir Internet, solo queremos el AP.
+Reiniciamos "sudo reboot"
+Al encender debería aparecer wlan1 como no disponible para modo monitor y si vais a vuesto deléfono vereis que a aparecido una nueva red llamada RadioNoise.
+Si os conectais, vereis que no teneis Inernet y que vuestra IP es 192.168.0.11
+
+Si no os funciona, iniciad manualmente hostpad con "sudo hostapd -d /etc/hostapd/hostapd.conf" y googlead los mensajes de error hasta que funcione. Es todo lo que puedo decir.
+Lógicamente, a mi no me funcionó a la primera. Esto es lo que hice.
+Primero: rompí a llorar desconsolado.
+Segundo: le conté mis problemas a un gato de peluche. (podeis usar un pato de goma)
+Tercero: googlee el mensaje error y descubrí a una persona que el apsabo lo mismo. Resulta que wpa_supplicant entra en conflicto porque no estamos usando seguridad wpa seguramente.
+Cuatro: escribí esta seccíon de la guía explicando como lo he sulicionado e inventandome los dos primeros pasos.
+Aquí va la solución.
+Si no teneis aircrack-ng, instaladlo con "sudo apt-get install aircrack-ng".
+Comprobad los procesos que pueden estar causando problemas con "sudo airmon-ng check"
+Si os aparece wpa_supplicant, eliminadlo con "sudo killall wpa_supplicant" Se os desconectará de las otras redes que utilicen wpa, un fastidio si estabais por SSH o VNC.
+Relanzadlo y listo "hostapd /etc/hostapd/hostapd.conf"
+Para evitar que esto ocurra, desactivo wpa_supplicant en la interfaz wlan1 agregando la linea "nohook wpa_supplicant" debajo de "interface wlan0" en el archivo "/etc/dhcpcd.conf"
+Notareis que habeis perdido el adaptador como monitor, eso es bueno, se está usando para otra cosa.
+Si reiniciais y sigue sin funcionar, es posible que el servicio hostapd que debe inciarse solo, no lo este haciendo.
+Ejecuta "sudo service hostapd restart" y si te aparece que servicio está masked, se soluciona con "sudo systemctl unmask hostapd", "sudo systemctl enable hostapd" y "sudo systemctl start hostapd" para verificar que funciona.
+
+Ahora ya sí, funciona, al menos en mi caso.
+Si sigue sin funcionar, repetidid los pasos del 1 al 3 y googlead.
+
+Lo siguiente sirve tanto para el mando como para el vehículo. Se trata del audio. Necesitamos una salida y una entrada, pero la Raspberry Pi solo tiene un jack. Podríamos usar microfonos y altavoces USB. Pero, por facilitar el intercambio de los componentes, todos los puertos de audio serán Jack 3.5mm. Para lograr un puerto más usaremos un adaptador USB. Como siempre, al final tenéis el que he usado yo por si quereis estar seguros, pero cualquiera debería funcionar.
+
+El sistema solo puede tener un dispositivo predeterminado, no podemos tener uno de entrada y otro de salida. Por eso el programa se configura con el nombre los dispositivos a usar. Para descubrir como se llaman, ejecuta las siguientes lineas.
+
+    Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+    if(mixerInfos != null)
+    	for (int i = 0; i < mixerInfos.length; i++)
+    		System.out.println(mixerInfos[i].getName());
+Identifica cual será el micrófono y cual los auriculares y modifica el nombre en las constantes del programa. Si tienes pensado usar exactamente las mismas piezas que yo, no hace falta.
+El archivo de constantes se llama "global", cambia "DEVICE_AUDIO_IN" y "DEVICE_AUDIO_OUT".
+
 ### PC
 ¿Quieres controlar el coche desde un ordenador? ¿Quieres controlarlo a través de Internet?
 Es posible, descarga las versiones de ordenador del controlador y listo.
+Es posible que requieran algo de configuración
 
 
 ## Manual de construcción
