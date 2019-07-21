@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UDPagent {
     private DatagramSocket socket;
@@ -28,8 +30,11 @@ public class UDPagent {
     }
 
     public boolean send(byte[] data, String ip){
+        return send(data, data.length, ip);
+    }
+    public boolean send(byte[] data, int size, String ip){
         try {
-            DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName(ip), port);
+            DatagramPacket packet = new DatagramPacket(data, size, InetAddress.getByName(ip), port);
             socket.send(packet);
         } catch (IOException ex) {
             //Logger.getLogger(UDPagent.class.getName()).log(Level.SEVERE, null, ex);
@@ -38,7 +43,10 @@ public class UDPagent {
 
         return false;
     }
-    public boolean recive(byte[] data, int timeout){
+    public boolean recive(byte[] data, int timeout, int timeWait){
+        return recive(data, data.length, timeWait, timeWait);
+    }
+    public boolean recive(byte[] data, int size, int timeout, int timeWait){
         try {
             socket.setSoTimeout(timeout);
             DatagramPacket packet = new DatagramPacket(data, data.length);

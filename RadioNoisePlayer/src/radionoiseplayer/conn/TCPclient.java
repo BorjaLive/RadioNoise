@@ -15,7 +15,7 @@ public class TCPclient {
     
     private final int MAXNULLRECV = 100;
     
-    public boolean connect(String ip, int port, int timeout){
+    public boolean connect(String ip, int port, int timeout, int waitTime){
         disconnect();
         try {
             socket = new Socket();
@@ -30,8 +30,8 @@ public class TCPclient {
             //Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("CLIENTE TCP: No se pudo conectar");
             timeout--;
-            try{Thread.sleep(1);} catch (InterruptedException e) {}
-            if(timeout != 0) return connect(ip, port, timeout);
+            try{Thread.sleep(waitTime);} catch (InterruptedException e) {}
+            if(timeout != 0) return connect(ip, port, timeout, waitTime);
         }
         return false;
     }

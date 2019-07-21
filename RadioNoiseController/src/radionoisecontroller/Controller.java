@@ -100,7 +100,6 @@ public class Controller {
         data_exchange(outBuffer, curState);
         
         //TODO: Toda la logica
-        curState[8] = (byte)1;
         
         //Iniciar e interrumpir modulos
         if(curState[2] == 0 && controller != null){
@@ -110,28 +109,37 @@ public class Controller {
             controller = new module_controller(sendData, recvData);
             controller.start();
         }
+        
         if(curState[3] == 0 && video != null){
+            sendData[10] = 0;
             video.interrupt();
         }
         if(curState[3] == 1 && pasState[3] == 0 && video == null){
+            sendData[10] = 1;
             video = new module_video(WM.getVideoBuffer(), WM);
             video.start();
         }
         
         if(curState[4] == 0 && audioIN != null){
+            sendData[9] = 0;
             audioIN.interrupt();
         }
         if(curState[4] == 1 && pasState[4] == 0 && audioIN == null){
+            sendData[9] = 1;
             audioIN = new module_audioIN();
             audioIN.start();
-        }
+        };
+        
         if(curState[5] == 0 && audioOUT != null){
+            sendData[8] = 0;
             audioOUT.interrupt();
         }
         if(curState[5] == 1 && pasState[5] == 0 && audioOUT == null){
+            sendData[8] = 1;
             audioOUT = new module_audioOUT();
             audioOUT.start();
         }
+        
         if(curState[8] == 0 && wifi != null){
             wifi.interrupt();
         }
@@ -156,6 +164,13 @@ public class Controller {
         //Actualizaciones de controles
         drive();
         
+        //TODO: Actualizar los volumenes
+        
+        sendData[11] = curState[7];
+        if(curState[1]==1)
+            sendData[14] = (byte)50;
+        else sendData[14] = (byte)200;
+        
         
         //Actualizar pantallas
         WM.act(audioIN!=null&&audioIN.check()==2, audioOUT!=null&&audioOUT.check()==2, video!=null&&video.check()==2, controller!=null&&controller.check()==2, wifi!=null&&wifi.check()==2, audioOUT!=null&&audioOUT.getEnabled(), wlan_signal, wlan_quality, curState[26], curState[27], recvData[2], recvData[3], curState[24], curState[18]);
@@ -163,7 +178,7 @@ public class Controller {
         
         outBuffer[0] = (byte)2;
         port.writeBytes(outBuffer, BYTES_OUT);
-        System.out.println(Arrays.toString(curState));
+        //System.out.println(Arrays.toString(curState));
     }
     
     public static boolean should_continue(){
@@ -592,17 +607,14 @@ public class Controller {
         JPanel panel =new JPanel(); 
         panel.setLayout(null);
         
-        JLabel label1 = new JLabel("Dispositivo de salida", (int) CENTER_ALIGNMENT);
+        JLabel label1 = new JLabel("Salida", (int) CENTER_ALIGNMENT);
         label1.setLocation(10, 10);
         label1.setSize(280, 20);
         label1.setFont(new Font("Courier", 0, 26));
-        JLabel label2 = new JLabel("Dispositivo de entrada", (int) CENTER_ALIGNMENT);
+        JLabel label2 = new JLabel("Entrada", (int) CENTER_ALIGNMENT);
         label2.setLocation(310, 10);
         label2.setSize(280, 20);
         label2.setFont(new Font("Courier", 0, 26));
-        
-        String week[]= { "Monday","Tuesday","Wednesday", 
-                         "Thursday","Friday","Saturday","Sunday"}; 
         
         JList list1 = new JList(devices);
         list1.setLocation(15, 45);

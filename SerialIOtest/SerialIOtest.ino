@@ -1,3 +1,4 @@
+
 #define PORT_SPEED 9600
 #define BYTES_IN 22
 #define BYTES_OUT 35
@@ -10,6 +11,7 @@
 #define PIN_6 5
 #define PIN_7 4
 #define PIN_8 3
+#define PIN_9 2
 
 
 void setup() {
@@ -23,6 +25,7 @@ void setup() {
   pinMode(PIN_6, INPUT);
   pinMode(PIN_7, INPUT);
   pinMode(PIN_8, INPUT);
+  pinMode(PIN_9, INPUT);
   Serial.begin(PORT_SPEED);
   Serial.setTimeout(50);
 }
@@ -39,7 +42,7 @@ void loop() {
     for(int i = 0; i < BYTES_IN; i++)
       buffIN[i] = Serial.read();
 
-    if(buffIN[0] == (byte)1){
+    if(buffIN[0] == 1){
       //TEST
       bool last = false;
       for(int i = 0; i < BYTES_OUT; i++){
@@ -51,6 +54,7 @@ void loop() {
       digitalWrite(LED_BUILTIN, buffIN[1]==0?LOW:HIGH);
     }else if(buffIN[0] == 3){
       //SEND
+      
       Serial.write(digitalRead(PIN_1));
       Serial.write(digitalRead(PIN_2));
       Serial.write(digitalRead(PIN_3));
@@ -58,9 +62,11 @@ void loop() {
       Serial.write(digitalRead(PIN_6));
       Serial.write(digitalRead(PIN_7));
       Serial.write(digitalRead(PIN_8));
-      for(int i = 0; i < BYTES_OUT-8; i++)
+      Serial.write(digitalRead(PIN_9));
+      for(int i = 0; i < BYTES_OUT-9; i++)
         Serial.write(0);
       Serial.write(digitalRead(PIN_4));
+      
     }else{
       Serial.write("ERROR");
     }

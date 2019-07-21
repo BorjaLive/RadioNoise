@@ -1,5 +1,7 @@
 package radionoisecontroller;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import radionoisecontroller.graphics.Texture;
 
 public class global {
@@ -26,7 +28,7 @@ public class global {
     public static final float OS_TIMEOUT = 1000f;
     public static final int IMAGE_BUFFER_SIZE = 60*1024, AUDIO_BUFFER_SIZE = 1024, AUDIO_CHUNK_SIZE = 1024;
     
-    public static final int CONNECTION_RETRYS = 20;
+    public static final int CONNECTION_RETRYS = 20, CONNECTION_WAIT_TIME = 100;
     public static final int TICKS_PER_BLINK = 5;
     public static final int BLINK_DURATION = 10*TICKS_PER_BLINK;
     public static final int STALL_UMBRAL = 2, DIGITAL_HUMBRAL = 63;
@@ -85,5 +87,21 @@ public class global {
     }
     public static float byte2float(byte b){
         return ((float)byte2int(b)/255.0f);
+    }
+    
+    public static Mixer getDeviceMixer(String name){
+        Mixer mixer = null;
+        Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+        if(mixerInfos == null){
+            return null;
+        }else{
+            int i = 0;
+            while(mixer == null && i <  mixerInfos.length){
+                if(mixerInfos[i].getName().equals(name))
+                    mixer = AudioSystem.getMixer(mixerInfos[i]);
+                i++;
+            }
+        }
+        return mixer;
     }
 }

@@ -27,19 +27,7 @@ public class module_audioIN extends module{
     @Override
     public void run() {
         try {
-            Mixer mixer = null;
-            Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
-            if(mixerInfos == null){
-                Controller.reportDie(getClass());
-                return;
-            }else{
-                int i = 0;
-                while(mixer == null && i <  mixerInfos.length){
-                    if(mixerInfos[i].getName().equals(DEVICE_AUDIO_OUT))
-                        mixer = AudioSystem.getMixer(mixerInfos[i]);
-                    i++;
-                }
-            }
+            Mixer mixer = getDeviceMixer(DEVICE_AUDIO_OUT);
             if(mixer == null){
                 Controller.reportDie(getClass());
                 return;
@@ -53,13 +41,16 @@ public class module_audioIN extends module{
             speakers.open(format);
             speakers.start();
             
-            volume = (FloatControl)speakers.getControl(FloatControl.Type.VOLUME);
+            try {
+                volume = (FloatControl)speakers.getControl(FloatControl.Type.VOLUME);
+            } catch (Exception e) {
+                System.out.println("No se pudo obtener el control del volumen");
+            }
 
             state = 1;
             int tryes = CONNECTION_RETRYS;
-            System.out.println("Me conecto por: "+AUDIOIN_PORT);
-            while(tryes-- > 0 && !cliente.check() && !interrupted())
-                cliente.connect(SERVER_IP, AUDIOIN_PORT, CONNECTION_RETRYS);
+            
+            cliente.connect(SERVER_IP, AUDIOIN_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
 
             if(cliente.check())
                 state = 2;

@@ -17,26 +17,6 @@ public class module_controller extends module{
     
     private byte[] send, recv;
     
-    /*
-        DATOS ENVIADOS
-        2 3
-        0 1 : Potencia rudeas
-        6 7
-        4 5 : Sentido rudeas
-        8 9 10 : Toggle AudioIN AudioOUT Video
-        11 : Claxon
-        12 13 : Posicion vista Z Y
-        14 15 : Potencia claxon y audio
-        16, ..., 17 : No SE USA
-    
-        DATOS RECIVIDOS
-		0, 1 : Voltaje Baterñias 1 y 2
-        2 : Voltaje Baterias juntas
-		3 : Voltaje Pilas
-        4 : No SE USA
-        
-    */
-    
     public module_controller(byte[] sendBuffer, byte[] reciveBuffer){
         cliente = new TCPclient();
         send = sendBuffer;
@@ -48,10 +28,12 @@ public class module_controller extends module{
         //Intentar conectarse
         state = 1;
         
-        cliente.connect(SERVER_IP, CONTROL_PORT, CONNECTION_RETRYS);
+        cliente.connect(SERVER_IP, CONTROL_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
         
         if(cliente.check())
             state = 2;
+        
+        System.out.println("Controles conectados");
         
         while(!interrupted() && cliente.check()){
             if(!cliente.send(send))

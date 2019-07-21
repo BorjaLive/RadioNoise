@@ -22,21 +22,8 @@ public class module_audioOUT extends module{
     @Override
     public void run() {
         try {
-            Mixer mixer = null;
-            Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
-            if(mixerInfos == null){
-                return;
-            }else{
-                int i = 0;
-                while(mixer == null && i <  mixerInfos.length){
-                    if(mixerInfos[i].getName().equals(DEVICE_AUDIO_IN))
-                        mixer = AudioSystem.getMixer(mixerInfos[i]);
-                    i++;
-                }
-            }
-            if(mixer == null){
-                return;
-            }
+            Mixer mixer = getDeviceMixer(DEVICE_AUDIO_IN);
+            if(mixer == null) return;
             
             servidor.iniciate(AUDIOOUT_PORT);
             System.out.println("Servidor iniciado");

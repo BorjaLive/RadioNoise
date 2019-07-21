@@ -121,7 +121,7 @@ public class TCPserver {
                 return false;
             }
         } catch (IOException ex) {
-            Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(TCPclient.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("SERVIDOR TCP: No se pudo recivir");
             return false;
         }

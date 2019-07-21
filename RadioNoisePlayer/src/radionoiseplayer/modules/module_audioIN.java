@@ -14,33 +14,25 @@ import javax.sound.sampled.SourceDataLine;
 public class module_audioIN extends module{
     private TCPclient cliente;
     private byte[] recvBuffer_size, recvBuffer_audio;
-    FloatControl volume;
+    private FloatControl volume;
+    private byte[] tone;
+    private boolean claxon;
     
     public module_audioIN(){
         cliente = new TCPclient();
         recvBuffer_size = new byte[4];
         recvBuffer_audio = new byte[AUDIO_BUFFER_SIZE];
         volume = null;
+        tone = new byte[AUDIO_BUFFER_SIZE];
+        claxon = false;
+        setFrequency(400);
     }
     
     @Override
     public void run() {
-            try {
-            Mixer mixer = null;
-            Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
-            if(mixerInfos == null){
-                return;
-            }else{
-                int i = 0;
-                while(mixer == null && i <  mixerInfos.length){
-                    if(mixerInfos[i].getName().equals(DEVICE_AUDIO_OUT))
-                        mixer = AudioSystem.getMixer(mixerInfos[i]);
-                    i++;
-                }
-            }
-            if(mixer == null){
-                return;
-            }
+        try {
+            Mixer mixer = getDeviceMixer(DEVICE_AUDIO_OUT);
+            if(mixer == null) return;
             
             SourceDataLine speakers;
 
@@ -50,12 +42,15 @@ public class module_audioIN extends module{
             speakers.open(format);
             speakers.start();
             
-            volume = (FloatControl)speakers.getControl(FloatControl.Type.VOLUME);
+            try {
+                volume = (FloatControl)speakers.getControl(FloatControl.Type.VOLUME);
+            } catch (Exception e) {
+                System.out.println("No se pudo obtener el control del volumen");
+            }
 
             state = 1;
-            int tryes = CONNECTION_RETRYS;
-            while(tryes-- > 0 && !cliente.check() && !interrupted())
-                cliente.connect(SERVER_IP, AUDIOIN_PORT, 100);
+            
+            cliente.connect(SERVER_IP, AUDIOIN_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
 
             if(cliente.check())
                 state = 2;
@@ -63,7 +58,12 @@ public class module_audioIN extends module{
             while(!isInterrupted()&& cliente.check()){
                 if(!cliente.recive(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE, 100))
                     break;
-                speakers.write(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE);
+                
+                if(claxon)
+                    speakers.write(tone, 0, AUDIO_BUFFER_SIZE);
+                else
+                    speakers.write(recvBuffer_audio, 0, AUDIO_BUFFER_SIZE);
+                
             }
             speakers.drain();
             speakers.close();
@@ -79,5 +79,14 @@ public class module_audioIN extends module{
     public void setVolume(float v){
         if(volume != null)
             volume.setValue(v);
+    }
+    
+    public void setClaxon(boolean c){
+        claxon = c;
+    }
+    public void setFrequency(int f){
+        for (int i = 0; i < AUDIO_BUFFER_SIZE; i++) {
+            tone[i] = (byte)(Math.sin(2 * Math.PI * i * f / 44100.0f)*255.0f);
+        }
     }
 }

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import static java.lang.Math.abs;
+import static java.lang.Thread.sleep;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import radionoisecontroller.Controller;
@@ -123,19 +124,21 @@ public class WindowManager {
         icon_controller.setColor(state_controller?COLOR_GREEN:COLOR_GRAY);
         icon_wifi.setColor(state_wifi?COLOR_GREEN:COLOR_GRAY);
         
-        if(state_audioOUT_active && !activating){
-            activating = true;
-            new Thread(){
-                @Override
-                public void run(){
-                    try {
-                        sleep(TIME_TO_WAIT_BEFORE_SHOWING_THE_MIC_IS_RECORDING);
-                    } catch (InterruptedException ex) {
-                        //Logger.getLogger(WindowManager.class.getName()).log(Level.SEVERE, null, ex);
+        if(state_audioOUT_active){
+            if(!activating){
+                activating = true;
+                new Thread(){
+                    @Override
+                    public void run(){
+                        try {
+                            sleep(TIME_TO_WAIT_BEFORE_SHOWING_THE_MIC_IS_RECORDING);
+                        } catch (InterruptedException ex) {
+                            //Logger.getLogger(WindowManager.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        showRecording();
                     }
-                    showRecording();
-                }
-            }.start();
+                }.start();
+            }
         }else this.recording = false;
         
         //Los potenciometros

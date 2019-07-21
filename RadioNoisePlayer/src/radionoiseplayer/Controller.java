@@ -8,23 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Controller {
-    /*
-        POSICONES DE LOS DATOS DE ENTRADA (5 bytes de datos)
-        2 3
-        0 1 : Voltaje baterias ruedas
-        4 : Salida
     
-        VALORES DE SALIDA (1 byte de control + 9 bytes de datos)
-        1 : Test (se espera recibir un patron 1 0 1 0... como confirmacion)
-        2 : Transferencia
-            POSICIONES DE LOS DATOS
-            2 3
-            0 1 : Potencia ruedas
-            4 5 : Angulo vision camara
-        3 : Pedir estado
-        
-    */
-    private static byte[] curState = new byte[BYTES_IN], pasState = new byte[BYTES_IN];
+    private static byte[] curState, pasState;
     private static module_controller controller;
     private static module_video video;
     private static module_audioIN audioIN;
@@ -32,12 +17,18 @@ public class Controller {
     
     private static SerialPort port;
     
-    private static byte[] outBuffer = new byte[BYTES_OUT];
+    private static byte[] outBuffer;
     private static byte[] recvData, sendData;
+    
+    private static boolean claxon_enabled;
+    private static byte claxon_frequency;
     
     public static boolean initiate(){
         sendData = new byte[BYTES_SEND];
         recvData = new byte[BYTES_RECIVE];
+        outBuffer = new byte[BYTES_OUT];
+        curState = new byte[BYTES_IN];
+        pasState = new byte[BYTES_IN];
         
         controller = new module_controller(sendData, recvData);
         controller.start();
@@ -84,33 +75,48 @@ public class Controller {
         //TODO: Toda la logica
         
         //Iniciar e interrumpir modulos
-        if(recvData[4] == 0 && audioOUT != null){
+        if(recvData[9] == 0 && audioOUT != null){
             audioOUT.interrupt();
             audioOUT = null;
         }
-        if(recvData[4] == 1 && audioOUT == null){
+        if(recvData[9] == 1 && audioOUT == null){
             audioOUT = new module_audioOUT();
             audioOUT.start();
         }
-        if(recvData[5] == 0 && audioIN != null){
+        if(recvData[8] == 0 && audioIN != null){
             audioIN.interrupt();
             audioIN = null;
         }
-        if(recvData[5] == 1 && audioIN == null){
+        if(recvData[8] == 1 && audioIN == null){
             audioIN = new module_audioIN();
             audioIN.start();
         }
         
-        if(recvData[6] == 0 && video != null){
+        if(recvData[10] == 0 && video != null){
             video.interrupt();
             video = null;
         }
-        if(recvData[6] == 1 && video == null){
+        if(recvData[10] == 1 && video == null){
             video = new module_video();
             video.start();
         }
         
         drive();
+        
+        //TODO: Actualizar los volumenes
+        
+        
+        //Claxon
+        if(recvData[11]==1 != claxon_enabled){
+            claxon_enabled = recvData[11] == 1;
+            if(audioIN != null)
+                audioIN.setClaxon(claxon_enabled);
+        }
+        if(recvData[14] != claxon_frequency){
+            claxon_frequency = recvData[14];
+            if(audioIN != null)
+                audioIN.setFrequency(byte2int(claxon_frequency)*78+20);
+        }
         
         
         outBuffer[0] = (byte)2;

@@ -5,10 +5,14 @@ import static radionoisecontroller.global.*;
 import radionoisecontroller.graphics.WindowManager;
 import static java.lang.Thread.interrupted;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import radionoisecontroller.Controller;
+import radionoisecontroller.conn.UDPagent;
 
 public class module_video extends module{
 
+    private static boolean firstTime = true;
     private TCPclient cliente;
     private WindowManager WM;
     private byte[] recvBuffer_size, recvBuffer_img;
@@ -24,9 +28,16 @@ public class module_video extends module{
     public void run() {
         WM.setVideoChanged(1);
         state = 1;
-        int tryes = CONNECTION_RETRYS;
-        while(tryes-- > 0 && !cliente.check() && !interrupted())
-            cliente.connect(SERVER_IP, VIDEO_PORT, 100);
+        
+        if(firstTime){
+            firstTime = false;
+            try {
+                sleep(2000);//Para darle tiempo al servidor a iniciar la camara
+            } catch (Exception e) {
+            }
+        }
+        
+        cliente.connect(SERVER_IP, VIDEO_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
         
         if(cliente.check())
             state = 2;
