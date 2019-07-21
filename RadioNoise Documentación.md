@@ -1,4 +1,5 @@
 
+
 # RadioNoise TCP/IP Vehicle Controller
 Software para controlar un vehículo radio-control con Raspberry Pi y Arduino, acompañado de diagramas de hardware.
 ## Índice
@@ -105,10 +106,10 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 
 | Posición | Uso |
 |--|--|
-| 0 | Voltaje Batería 1 (12v) |
-| 1 | Voltaje Batería 2 (12v) |
-| 2 | Voltaje Motores (24v) |
-| 3 | Voltaje Servos (6v) |
+| 0 | Voltaje Motores (24v) |
+| 1 | Voltaje Servos (6v) |
+| 2 | NO SE USA |
+| 3 | NO SE USA |
 | 4 | NO SE USA |
 
 ### RPI 3 -> Arduino Vehículo
@@ -167,10 +168,10 @@ El vehículo envía 5 bytes.
 
 | Posición | Uso |
 |--|--|
-| 0 | Voltaje batería 1 |
-| 1 | Voltaje batería 2 |
-| 2 | Voltaje baterias |
-| 3 | Voltaje pilas |
+| 0 | Voltaje baterias |
+| 1 | Voltaje pilas |
+| 2 | NO SE USA |
+| 3 | NO SE USA |
 | 4 | NO SE USA |
 
 #### Video

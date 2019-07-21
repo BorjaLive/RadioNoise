@@ -570,7 +570,7 @@ public class Controller {
         //Mecanismo de blink
         for(int i = 0; i < BYTES_OUT; i++){
             if(blink[i] != -1){
-                if(blink[i] % TICKS_PER_BLINK == 0)
+                if(blink[i] % TICKS_PER_LED_BLINK == 0)
                     outBuffer[i] = not(outBuffer[i]);
                 if(blink[i] == BLINK_DURATION)
                     blink[i] = -1;

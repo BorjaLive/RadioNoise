@@ -22,6 +22,7 @@ public class WindowManager {
     private int videoChanged;
     
     private boolean recording, activating;
+    private int recordingBlink;
     
     public WindowManager(MultiWindow windows){
         this.windows = windows;
@@ -69,6 +70,7 @@ public class WindowManager {
         text_battery_servo = new TextLabel(550, 413, 1f, 1f);
         
         recording = activating = false;
+        recordingBlink = -1;
     }
     
     public void setVideoChanged(int v){
@@ -90,7 +92,7 @@ public class WindowManager {
             case 1:
                 icon_audioIN.draw();
                 icon_audioOUT.draw();
-                if(recording)
+                if(recording && recordingBlink > TICKS_PER_RECORDING_BLINK/2)
                     icon_audioOUT_active.draw();
                 icon_video.draw();
                 icon_controller.draw();
@@ -140,6 +142,13 @@ public class WindowManager {
                 }.start();
             }
         }else this.recording = false;
+        //Blink del icono de grabacion
+        if(recording){
+            if(recordingBlink > 0)
+                recordingBlink--;
+            else
+                recordingBlink = TICKS_PER_RECORDING_BLINK;
+        }
         
         //Los potenciometros
         power_coarse.setPowerH(coarse);
@@ -214,5 +223,6 @@ public class WindowManager {
     public void showRecording(){
         recording = true;
         activating = false;
+        recordingBlink = TICKS_PER_RECORDING_BLINK;
     }
 }

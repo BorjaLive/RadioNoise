@@ -29,8 +29,8 @@ public class global {
     public static final int IMAGE_BUFFER_SIZE = 60*1024, AUDIO_BUFFER_SIZE = 1024, AUDIO_CHUNK_SIZE = 1024;
     
     public static final int CONNECTION_RETRYS = 20, CONNECTION_WAIT_TIME = 100;
-    public static final int TICKS_PER_BLINK = 5;
-    public static final int BLINK_DURATION = 10*TICKS_PER_BLINK;
+    public static final int TICKS_PER_LED_BLINK = 5, TICKS_PER_RECORDING_BLINK = 100;
+    public static final int BLINK_DURATION = 10*TICKS_PER_LED_BLINK;
     public static final int STALL_UMBRAL = 2, DIGITAL_HUMBRAL = 63;
     public static final float SENSIBILIDY_CONSTANT = 0.1f;
     public static final int TIME_TO_WAIT_BEFORE_SHOWING_THE_MIC_IS_RECORDING = 1000;
