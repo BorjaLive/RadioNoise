@@ -70,7 +70,7 @@ public class WindowManager {
         text_battery_servo = new TextLabel(550, 413, 1f, 1f);
         
         recording = activating = false;
-        recordingBlink = -1;
+        recordingBlink = 0;
     }
     
     public void setVideoChanged(int v){
@@ -127,7 +127,7 @@ public class WindowManager {
         icon_wifi.setColor(state_wifi?COLOR_GREEN:COLOR_GRAY);
         
         if(state_audioOUT_active){
-            if(!activating){
+            if(!activating && !recording){
                 activating = true;
                 new Thread(){
                     @Override
@@ -143,6 +143,7 @@ public class WindowManager {
             }
         }else this.recording = false;
         //Blink del icono de grabacion
+        System.out.println("RECORDING: "+recording+"  Ticks: "+recordingBlink+" de "+TICKS_PER_RECORDING_BLINK);
         if(recording){
             if(recordingBlink > 0)
                 recordingBlink--;
@@ -221,6 +222,7 @@ public class WindowManager {
     }
     
     public void showRecording(){
+        System.out.println("Se activa el show recording");
         recording = true;
         activating = false;
         recordingBlink = TICKS_PER_RECORDING_BLINK;
