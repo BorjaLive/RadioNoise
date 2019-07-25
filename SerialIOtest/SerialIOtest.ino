@@ -63,7 +63,8 @@ void loop() {
       Serial.write(digitalRead(PIN_7));
       Serial.write(digitalRead(PIN_8));
       Serial.write(digitalRead(PIN_9));
-      for(int i = 0; i < BYTES_OUT-9; i++)
+      Serial.write(digitalRead(PIN_2));
+      for(int i = 0; i < BYTES_OUT-10; i++)
         Serial.write(0);
       Serial.write(digitalRead(PIN_4));
       

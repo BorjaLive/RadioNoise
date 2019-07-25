@@ -143,7 +143,6 @@ public class WindowManager {
             }
         }else this.recording = false;
         //Blink del icono de grabacion
-        System.out.println("RECORDING: "+recording+"  Ticks: "+recordingBlink+" de "+TICKS_PER_RECORDING_BLINK);
         if(recording){
             if(recordingBlink > 0)
                 recordingBlink--;
@@ -165,12 +164,12 @@ public class WindowManager {
         this.battery_main.setPowerW(battery_main);
         this.battery_servo.setPowerW(battery_servo);
         
-        this.volume_car.setPowerW((byte)255);
-        this.volume_self.setPowerW((byte)255);
-        this.wlan_calidad.setPowerW(100);
-        this.wlan_signal.setPowerW((int) (100+((-0)*(10.0f/11.0f))));
-        this.battery_main.setPowerW((byte)255);
-        this.battery_servo.setPowerW((byte)255);
+        this.volume_car.setPowerW(volume_car);
+        this.volume_self.setPowerW(volume_self);
+        this.wlan_calidad.setPowerW(wlan_calidad);
+        this.wlan_signal.setPowerW((int) (100+((wlan_signal)*(10.0f/11.0f))));
+        this.battery_main.setPowerW(battery_main);
+        this.battery_servo.setPowerW(battery_servo);
         
         if(wlan_calidad < 30)       this.wlan_calidad.setColor(COLOR_RED);
         else if(wlan_calidad < 50)  this.wlan_calidad.setColor(COLOR_ORANGE);
@@ -182,14 +181,16 @@ public class WindowManager {
         else if(wlan_signal < -40)  this.wlan_signal.setColor(COLOR_YELLOW);
         else                        this.wlan_signal.setColor(COLOR_GREEN);
         
-        if(battery_main < 30)       this.battery_main.setColor(COLOR_RED);
-        else if(battery_main < 50)  this.battery_main.setColor(COLOR_ORANGE);
-        else if(battery_main < 70)  this.battery_main.setColor(COLOR_YELLOW);
+        int battery_main_p = byte2Percentaje(battery_main);
+        if(battery_main_p < 30)       this.battery_main.setColor(COLOR_RED);
+        else if(battery_main_p < 50)  this.battery_main.setColor(COLOR_ORANGE);
+        else if(battery_main_p < 70)  this.battery_main.setColor(COLOR_YELLOW);
         else                        this.battery_main.setColor(COLOR_GREEN);
         
-        if(battery_servo < 30)      this.battery_servo.setColor(COLOR_RED);
-        else if(battery_servo < 50) this.battery_servo.setColor(COLOR_ORANGE);
-        else if(battery_servo < 70) this.battery_servo.setColor(COLOR_YELLOW);
+        int battery_servo_p = byte2Percentaje(battery_servo);
+        if(battery_servo_p < 30)      this.battery_servo.setColor(COLOR_RED);
+        else if(battery_servo_p < 50) this.battery_servo.setColor(COLOR_ORANGE);
+        else if(battery_servo_p < 70) this.battery_servo.setColor(COLOR_YELLOW);
         else                        this.battery_servo.setColor(COLOR_GREEN);
         
         text_volume_self.setPercentaje(volume_self);
