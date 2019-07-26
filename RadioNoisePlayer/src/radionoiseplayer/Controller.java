@@ -64,6 +64,8 @@ public class Controller {
             last = !last;
             i++;
         }
+        
+        demo();
         return good;
     }
     
@@ -201,4 +203,21 @@ public class Controller {
         return (byte)(b==1?0:1);
     }
 
+    
+    public static void demo(){
+        outBuffer[0] = (byte)2;
+        
+        for(int i = 9; i <= 12; i++){
+            for(int j = 9; j <= 12; j++)
+                outBuffer[j] = (byte) (i>=j?1:0);
+            port.writeBytes(outBuffer, BYTES_OUT);
+            try {Thread.sleep(250);} catch (Exception e) {}
+        }
+        for(int i = 12; i >= 9; i--){
+            for(int j = 9; j <= 12; j++)
+                outBuffer[j] = (byte) (i>=j?1:0);
+            port.writeBytes(outBuffer, BYTES_OUT);
+            try {Thread.sleep(250);} catch (Exception e) {}
+        }
+    }
 }
