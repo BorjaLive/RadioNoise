@@ -63,7 +63,7 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 20 | Direction View X |
 | 21 | Direction View Y |
 | 22 | Potencia PAN de tracción |
-| 23 | Potencia Claxon |
+| 23 | Frecuencia Claxon |
 | 24 | Potencia Velocidad |
 | 25 | Potencia Sensividlidad camara |
 | 26 | Potencia Audio mando |
@@ -158,7 +158,7 @@ El mando envía 18 bytes.
 | 11 | Claxon |
 | 12 | Angulo vista Z |
 | 13 | Angulo vista Y |
-| 14 | Potencia claxon |
+| 14 | Frecuencia claxon |
 | 15 | Potencia audio |
 | 16 | NO SE USA |
 | 17 | NO SE USA |
@@ -209,7 +209,7 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | A 2 IN | Potenciómetro View X |
 | A 3 IN | Potenciómetro View Y |
 | A 4 IN | Potenciómetro PAN de tracción |
-| A 5 IN | Potenciómetro Volumen claxon |
+| A 5 IN | Potenciómetro Frecuencia del claxon |
 | A 6 IN | Potenciómetro Potencia |
 | A 7 IN | Potenciómetro Sensibilidad cámara |
 | A 8 IN | Potenciómetro Volumen mando |
@@ -239,10 +239,8 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 
 | Pin y modo | Uso |
 |--|--|
-| A 15 IN | Tensión Batería 1 (12v) |
-| A 14 IN | Tensión Batería 2 (12v) |
-| A 13 IN | Tensión Motores (24v) |
-| A 12 IN | Tensión Servos (6v) |
+| A 15 IN | Tensión Motores (24v) |
+| A 14 IN | Tensión Servos (6v) |
 | D 7 OUT | Control Servo cámara Z |
 | D 6 OUT | Control Servo cámara Y |
 | D 26 OUT | LED Azul Module Controller |
@@ -295,6 +293,17 @@ Monta la imagen más reciente de Raspbian en tu SD de preferencia, siguiendo los
 Comprueba que tienes instalado Java 8, de no ser así, instalalo [así](https://raspberrypi.stackexchange.com/questions/4683/how-to-install-the-java-jdk-on-raspberry-pi).
 Comprueba que tienes Arduino IDE instalado, si no es así; instálalo como si estuvieras en un ordenador.
 
+En la Raspberry PI del mando hay que establecer una IP estática para el adaptador de red. En Debian 10 se puede hacer modificando "/etc/dhcpcd.conf", requiere permisos root.
+Inserta estas lineas, donde wlan1 es el adaptador de red a usar, y guarda el archivo.
+
+	interface wlan1
+	static ip_address=192.168.0.5
+	static routers 192.168.0.1
+	static domain_name_server=192.168.0.1
+	static domain_name_servers=
+	static domain_search=
+
+
 En la Raspberry del vehículo hay que configurar algunos apartados.
 Lo primero es verificar que el adaptador de red funciona, podeis ver una lista de los dispositivos ya probados [aquí](https://elinux.org/RPi_USB_Wi-Fi_Adapters).
 En general, si el chipset de vuestro dispositivo está incluido, debería funcionar. Es posible que requiera controladores non-free, debereis instalarlos a parte. Más información [aquí](https://wiki.debian.org/es/WiFi).
@@ -315,7 +324,7 @@ Vamos a configurar al Raspberry Pi 3 del coche como punto de acceso, desded ahor
 Instalamos los programas necesarios con "sudo apt-get install hostapd dnsmasq"
 Uno es para crear el AP y el otro para el servidor DHCP (el que entrega las IPs automaticamente) y el DNS (el que resuelve los dominios)
 Paramos los programas para poder configurarlos "sudo systemctl stop hostapd && sudo systemctl stop dnsmasq"
-Antes vamos a asegurarnos de que nuestra puerta de enlace no se mueve de sitio, entramos en la configuracion "sudo nano /etc/dhcpcd.conf", podeis usar emacs o vi si estais más cómodos, yo prefiero nano.
+Antes vamos a asegurarnos de que nuestra puerta de enlace no se mueve de sitio, entramos en la configuracion "/etc/dhcpcd.conf".
 Al igual que hicimos con el mando, agregamos en el archivo: 
 
     interface wlan1

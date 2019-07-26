@@ -17,12 +17,16 @@ public class module_wifi extends module{
         state = 1;
         if(System.getProperty("os.name").contains("Windows")){
             //Seguro que Windows (o quizas ReactOS)
-            executeWait("netsh wlan disconnect interface=\""+WLAN_INTERFACE_WIN+"\"");
-            executeWait("netsh wlan connect ssid=RadioNoise interface=\""+WLAN_INTERFACE_WIN+"\" name="+WLAN_PROFILE_WIN);
+            if(!(executeWait("netsh wlan disconnect interface=\""+WLAN_INTERFACE_WIN+"\"") &&
+                    executeWait("netsh wlan connect ssid=RadioNoise interface=\""+WLAN_INTERFACE_WIN+"\" name="+WLAN_PROFILE_WIN))){
+                state = 0;
+                return;
+            }
             
             int calidad;
             while(!interrupted() && consecutiveFails < WLAN_SCANTIMEOUT){
                 String data = executeGet("netsh wlan show interfaces");
+                if(data.equals("EXIT")) break;
                 
                 if(data == null || data.isEmpty() || data.contains("No disponible"))
                     calidad = -1;
@@ -35,11 +39,11 @@ public class module_wifi extends module{
                     if(data.contains("desconectado"))
                         calidad = -1;
                     else{
-                        data = data.substring(data.indexOf("Se�al"));
-                        data = data.substring(0,data.indexOf("Perfil"));
-                        data = data.replace(" ","").replace("Se�al", "").replace(":", "").replace("%", "");
-                        System.out.println("ESTO ES LO QUE TENGO: "+data+ " de "+WLAN_INTERFACE_WIN);
+                        //System.out.println("ESTO ES LO QUE TENGO: "+data+ " de "+WLAN_INTERFACE_WIN);
                         try{
+                            data = data.substring(data.indexOf("Se�al"));
+                            data = data.substring(0,data.indexOf("Perfil"));
+                            data = data.replace(" ","").replace("Se�al", "").replace(":", "").replace("%", "");
                             calidad = Integer.parseInt(data);
                         }catch(NumberFormatException e){
                             calidad = -1;
@@ -63,20 +67,25 @@ public class module_wifi extends module{
             }
         }else{
             //Seguramente Linux
-            executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" up");
-            executeWait("sudo iw dev "+WLAN_INTERFACE_LINUX+" connect RadioNoise");
+            if(!(executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" up") &&
+                    executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" up") &&
+                    executeWait("sudo iw dev "+WLAN_INTERFACE_LINUX+" connect RadioNoise"))){
+                state = 0;
+                return;
+            }
             
             int signal;
             while(!interrupted() && consecutiveFails < WLAN_SCANTIMEOUT){
                 String data = executeGet("iw dev "+WLAN_INTERFACE_LINUX+" station dump | grep \"signal:\"");
+                if(data.equals("EXIT")) break;
                 
                 if(data == null || data.isEmpty()){
                     signal = 0;
                 }else{
                     //Venga ese parser
-                    data = data.substring(data.indexOf('-'));
-                    data = data.substring(0, data.indexOf(' '));
                     try{
+                        data = data.substring(data.indexOf('-'));
+                        data = data.substring(0, data.indexOf(' '));
                         signal = Integer.parseInt(data);
                     }catch(NumberFormatException e){
                         signal = -1;
@@ -97,12 +106,11 @@ public class module_wifi extends module{
                     Controller.wlan_quality = (int)((signal+110)*(float)(10.0/7.0));
                     if(Controller.wlan_quality > 100) Controller.wlan_quality = 100;
                 }
-                System.out.println("Signal: "+Controller.wlan_signal+"    Calidad: "+Controller.wlan_quality);
+                //System.out.println("Signal: "+Controller.wlan_signal+"    Calidad: "+Controller.wlan_quality);
                 try {sleep(WLAN_SCANDELAY);} catch (InterruptedException ex) {break;}
             }
             
             executeWait("sudo iw dev "+WLAN_INTERFACE_LINUX+" disconnect");
-            
         }
         
         
@@ -131,7 +139,9 @@ public class module_wifi extends module{
                 }
             }
             proc.destroy();
-        } catch (IOException | InterruptedException ex) {
+        }catch (InterruptedException ie){
+            return "EXIT";
+        } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }

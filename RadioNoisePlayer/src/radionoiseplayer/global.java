@@ -23,8 +23,8 @@ public class global {
     public static final int CONNECTION_RETRYS = 20, CONNECTION_WAIT_TIME = 25;
     public static final int TICKS_PER_BLINK = 5;
     
-    public static final String DEVICE_AUDIO_IN = "";
-    public static final String DEVICE_AUDIO_OUT = "";
+    public static final String DEVICE_AUDIO_IN = "Device [plughw:2,0]";
+    public static final String DEVICE_AUDIO_OUT = "Device [plughw:2,0]";
     //public static final String DEVICE_AUDIO_IN = "Micrófono (Realtek High Definit";
     //public static final String DEVICE_AUDIO_OUT = "Altavoces (Realtek High Definition Audio)";
     

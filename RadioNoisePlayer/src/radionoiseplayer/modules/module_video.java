@@ -1,21 +1,17 @@
 package radionoiseplayer.modules;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import static java.lang.Thread.interrupted;
 import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
-import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
-import static org.bytedeco.javacv.Java2DFrameUtils.toIplImage;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.javacv.VideoInputFrameGrabber;
-import org.bytedeco.opencv.opencv_core.IplImage;
 import radionoiseplayer.conn.TCPserver;
 import static radionoiseplayer.global.*;
 import radionoiseplayer.graphics.SyncTimer;

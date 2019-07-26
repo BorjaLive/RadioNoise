@@ -6,8 +6,8 @@ import radionoisecontroller.graphics.Texture;
 
 public class global {
     public static final int BAUD_SPEED = 9600;
-    //static String ARDUINO_PORT = "/dev/ttyACM0";
-    public static final String ARDUINO_PORT = "COM4";
+    static String ARDUINO_PORT = "/dev/ttyACM0";
+    //public static final String ARDUINO_PORT = "COM4";
     public static final boolean ARDUINO_OVERRIDE = false;
     public static final int BYTES_IN = 35, BYTES_OUT = 22;
     
@@ -35,8 +35,8 @@ public class global {
     public static final float SENSIBILIDY_CONSTANT = 0.1f;
     public static final int TIME_TO_WAIT_BEFORE_SHOWING_THE_MIC_IS_RECORDING = 1000;
     
-    public static String DEVICE_AUDIO_IN = "CAMERA [plughw:2,0]";
-    public static String DEVICE_AUDIO_OUT = "Audio [plughw:1,0]";
+    public static String DEVICE_AUDIO_IN = "Device [plughw:2,0]";
+    public static String DEVICE_AUDIO_OUT = "Device [plughw:2,0]";
     public static boolean CUSTOM_AUDIO_DEVICE = false;
     //public static String DEVICE_AUDIO_IN = "Micrófono (Realtek High Definit";
     //public static String DEVICE_AUDIO_OUT = "Altavoces (Realtek High Definition Audio)";
@@ -66,7 +66,7 @@ public class global {
     public static final float[] COLOR_GREEN = new float[]         {  0/255f,255/255f,  0/255f};
     public static final float[] COLOR_BLUE = new float[]          {  0/255f,  0/255f,255/255f};
     
-    public static final String RESOURCES = (RadioNoiseController.class.getResource("graphics/resources").toString()+"\\").substring(6);
+    public static final String RESOURCES = (System.getProperty("os.name").contains("Win")?"":"/")+(RadioNoiseController.class.getResource("graphics/resources").toString()+"/").substring(6);
     
     //TODO: ponerlo todo en mayusculas
     public static Texture StreamImage, texture_audioOUT, texture_audioIN, texture_video, texture_controller, texture_wifi, texture_audioOUT_active, texture_battery_nonrechargeable, texture_battery_rechargeable,
@@ -87,6 +87,9 @@ public class global {
     }
     public static float byte2float(byte b){
         return ((float)byte2int(b)/255.0f);
+    }
+    public static int byte2Percentaje(byte b){
+        return (int)(((b & 0xFF)/255.0f)*100.0f);
     }
     
     public static Mixer getDeviceMixer(String name){
