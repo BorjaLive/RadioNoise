@@ -63,7 +63,7 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 20 | Direction View X |
 | 21 | Direction View Y |
 | 22 | Potencia PAN de tracción |
-| 23 | Potencia Claxon |
+| 23 | Frecuencia Claxon |
 | 24 | Potencia Velocidad |
 | 25 | Potencia Sensividlidad camara |
 | 26 | Potencia Audio mando |
@@ -158,7 +158,7 @@ El mando envía 18 bytes.
 | 11 | Claxon |
 | 12 | Angulo vista Z |
 | 13 | Angulo vista Y |
-| 14 | Potencia claxon |
+| 14 | Frecuencia claxon |
 | 15 | Potencia audio |
 | 16 | NO SE USA |
 | 17 | NO SE USA |
@@ -209,7 +209,7 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | A 2 IN | Potenciómetro View X |
 | A 3 IN | Potenciómetro View Y |
 | A 4 IN | Potenciómetro PAN de tracción |
-| A 5 IN | Potenciómetro Volumen claxon |
+| A 5 IN | Potenciómetro Frecuencia del claxon |
 | A 6 IN | Potenciómetro Potencia |
 | A 7 IN | Potenciómetro Sensibilidad cámara |
 | A 8 IN | Potenciómetro Volumen mando |
@@ -239,10 +239,8 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 
 | Pin y modo | Uso |
 |--|--|
-| A 15 IN | Tensión Batería 1 (12v) |
-| A 14 IN | Tensión Batería 2 (12v) |
-| A 13 IN | Tensión Motores (24v) |
-| A 12 IN | Tensión Servos (6v) |
+| A 15 IN | Tensión Motores (24v) |
+| A 14 IN | Tensión Servos (6v) |
 | D 7 OUT | Control Servo cámara Z |
 | D 6 OUT | Control Servo cámara Y |
 | D 26 OUT | LED Azul Module Controller |
