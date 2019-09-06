@@ -20,12 +20,18 @@ public final class Potenciometer extends Shape{
     public void setPowerH(int power){
         setScale(width/(float)WINDOW_WIDTH, (height*(power/100.0f))/(float)WINDOW_HEIGHT);
     }
+    public void setPowerH(float power){
+        setScale(width/(float)WINDOW_WIDTH, (height*power)/(float)WINDOW_HEIGHT);
+    }
     
     public void setPowerW(byte power){
         setScale((width*(((float)((power & 0xFF)))/255.0f))/(float)WINDOW_WIDTH, height/(float)WINDOW_HEIGHT);
     }
     public void setPowerW(int power){
         setScale((width*(power/100.0f))/(float)WINDOW_WIDTH, height/(float)WINDOW_HEIGHT);
+    }
+    public void setPowerW(float power){
+        setScale((width*power)/(float)WINDOW_WIDTH, height/(float)WINDOW_HEIGHT);
     }
     
 }

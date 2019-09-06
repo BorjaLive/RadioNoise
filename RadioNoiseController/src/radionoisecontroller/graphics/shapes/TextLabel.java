@@ -1,6 +1,5 @@
 package radionoisecontroller.graphics.shapes;
 
-import radionoisecontroller.graphics.Texture;
 import static radionoisecontroller.global.*;
 
 public final class TextLabel{
@@ -17,13 +16,18 @@ public final class TextLabel{
         this.y = y;
     }
     
-    public void setPercentaje(byte b){
-        setPercentaje((int)(b & 0xFF));
+    public void setPercentaje(byte p){
+        setPercentaje((float)(((p & 0xFF))/255.0f));
     }
     public void setPercentaje(int p){
         if(p < 0) p = 0;
         else if(p > 100) p = 100;
         setText(p+"%");
+    }
+    public void setPercentaje(float p){
+        if(p < 0) p = 0;
+        else if(p > 1) p = 1.0f;
+        setText(((int)(p*100))+"%");
     }
     
     public void setText(String text){

@@ -30,6 +30,7 @@ public class Controller {
     
     private static SerialPort port;
     public static int wlan_quality, wlan_signal;
+    private static float[] voltajes;
     
     private static byte[] outBuffer;
     private static byte[] recvData, sendData;
@@ -37,9 +38,10 @@ public class Controller {
     private static WindowManager WM;
     
     //Variables de conduccion
-    private static boolean tanque, burnOutMain, burnOutServo, activeW1, activeW2, activeW3, activeW4;
+    private static boolean tanque, activeW1, activeW2, activeW3, activeW4;
     private static int[] blink;
     private static int servoZ, servoY;
+    private static float[] batteryValues;
     
     public static void initiate(){
         outBuffer = new byte[BYTES_OUT];
@@ -47,6 +49,7 @@ public class Controller {
         pasState = new byte[BYTES_IN];
         sendData = new byte[BYTES_SEND];
         recvData = new byte[BYTES_RECIVE];
+        voltajes = new float[5];
         
         WM = null;
         
@@ -54,13 +57,12 @@ public class Controller {
         wlan_signal = 0;
         
         //Variables de conduccion
-        burnOutMain = false;
-        burnOutServo = false;
         blink = new int[BYTES_OUT];
         for(int i = 0; i < BYTES_OUT; i++){
             blink[i] = -1;
         }
         servoZ = servoY = 90;
+        tanque = false;
     }
     
     public static boolean arduinoTest(){
@@ -80,7 +82,17 @@ public class Controller {
         
         outBuffer[0] = (byte)1;
         byte[] recv = new byte[BYTES_IN];
-        data_exchange(outBuffer, recv);
+        
+        port.writeBytes(outBuffer, outBuffer.length);
+        
+        while(port.bytesAvailable() != recv.length){
+            try {
+                Thread.sleep(CTRL_DELAY);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        port.readBytes(recv, recv.length);
         
         //System.out.println("RECIVIDO: "+Arrays.toString(recv));
         
@@ -98,25 +110,40 @@ public class Controller {
     
     public static void act(){
         System.arraycopy(curState, 0, pasState, 0, curState.length);
-        outBuffer[0] = (byte)3;
         data_exchange(outBuffer, curState);
         
         //TODO: Toda la logica
+        //Simular baterias
+        recvData[0] = (byte)200;
+        recvData[1] = (byte)190;
+        recvData[2] = (byte)180;
+        recvData[3] = (byte)170;
+        recvData[4] = (byte)100;
+        
+        //Suavizar potenciometros
+        for(int i = 22; i<= 27; i++){
+            curState[i] = (byte) ((byte2int(curState[i])+byte2int(pasState[i]))/2);
+            if(byte2int(curState[i]) < POTENCIOMETER_LOW_MARGIN)
+                curState[i] = 0;
+            else if(byte2int(curState[i]) > POTENCIOMETER_HIGH_MARGIN)
+                curState[i] = (byte)255;
+        }
+        
         
         //Iniciar e interrumpir modulos
-        if(curState[2] == 0 && controller != null){
+        if(curState[7] == 0 && controller != null){
             controller.interrupt();
         }
-        if(curState[2] == 1 && pasState[2] == 0 && controller == null){
+        if(curState[7] == 1 && pasState[7] == 0 && controller == null){
             controller = new module_controller(sendData, recvData);
             controller.start();
         }
         
-        if(curState[3] == 0 && video != null){
+        if(curState[6] == 0 && video != null){
             sendData[10] = 0;
             video.interrupt();
         }
-        if(curState[3] == 1 && pasState[3] == 0 && video == null){
+        if(curState[6] == 1 && pasState[6] == 0 && video == null){
             sendData[10] = 1;
             video = new module_video(WM.getVideoBuffer(), WM);
             video.start();
@@ -150,10 +177,10 @@ public class Controller {
             wifi.start();
         }
         
-        if(curState[6] == 0 && pasState[6] == 1 && audioOUT != null){
+        if(curState[13] == 0 && pasState[13] == 1 && audioOUT != null){
             audioOUT.setEnabled(false);
         }
-        if(curState[6] == 1 && pasState[6] == 0 && audioOUT != null){
+        if(curState[13] == 1 && pasState[13] == 0 && audioOUT != null){
             audioOUT.setEnabled(true);
         }
         //RECIVIDO DESDE ARDUINO    4, 5, 6, 7, 8 : Toggle AudioIN AudioOUT Video Controller Wifi
@@ -167,19 +194,20 @@ public class Controller {
         drive();
         
         //TODO: Actualizar los volumenes
-        
         sendData[11] = curState[7];
-        if(curState[1]==1)
-            sendData[14] = (byte)50;
-        else sendData[14] = (byte)200;
+        
+        //Actualizar voltajes
+        //TODO: Revisar la conversion de voltajes
+        voltajes[0] = byte2float(recvData[0])*VOLTAJE_DIVIDER_CONSTANT_1;
+        voltajes[1] = byte2float(recvData[1])*VOLTAJE_DIVIDER_CONSTANT_2;
+        voltajes[2] = byte2float(recvData[2])*VOLTAJE_DIVIDER_CONSTANT_3;
+        voltajes[3] = byte2float(recvData[3])*VOLTAJE_DIVIDER_CONSTANT_4;
+        voltajes[4] = byte2float(recvData[4])*VOLTAJE_DIVIDER_CONSTANT_5;
         
         
         //Actualizar pantallas
-        WM.act(audioIN!=null&&audioIN.check()==2, audioOUT!=null&&audioOUT.check()==2, video!=null&&video.check()==2, controller!=null&&controller.check()==2, wifi!=null&&wifi.check()==2, audioOUT!=null&&audioOUT.getEnabled(), wlan_signal, wlan_quality, curState[26], curState[27], recvData[2], recvData[3], curState[24], curState[18]);
+        WM.act(audioIN!=null&&audioIN.check()==2, audioOUT!=null&&audioOUT.check()==2, video!=null&&video.check()==2, controller!=null&&controller.check()==2, wifi!=null&&wifi.check()==2, audioOUT!=null&&audioOUT.getEnabled(), wlan_signal, wlan_quality, curState[26], curState[27], voltajes, curState[24], curState[18], curState[10]==1);
         
-        
-        outBuffer[0] = (byte)2;
-        port.writeBytes(outBuffer, BYTES_OUT);
         //System.out.println(Arrays.toString(curState));
     }
     
@@ -215,15 +243,17 @@ public class Controller {
     
     public static void setWindowManager(WindowManager WM){
         Controller.WM = WM;
+        batteryValues = WM.getBatteryValues();
     }
     
     
     private static void data_exchange(byte[] outBuffer, byte[] inBuffer){
+        outBuffer[0] = (byte)3;
         port.writeBytes(outBuffer, outBuffer.length);
         
         while(port.bytesAvailable() != inBuffer.length){
             try {
-                Thread.sleep(1);
+                Thread.sleep(CTRL_DELAY);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -244,26 +274,45 @@ public class Controller {
     */
     private static void drive(){
         //Activacion de ruedas
-        if(recvData[2] == 0){   //Cuando se acabe la bateria se decalra el burnOutMain
-            burnOutMain = true;
-            activeW1 = false; //Se desconectan todas las ruedas
-            activeW2 = false;
-            activeW3 = false;
-            activeW4 = false;
-            blink[5] = 0;   //Parpadean los leds rojos
-            blink[6] = 0;
-            blink[7] = 0;
-            blink[8] = 0;
-        }
-        if(recvData[2] == 0){   //Cuando bajan demasiado las pilas se decalra el burnOutServo
-            burnOutServo = true;
-        }
-        if(!burnOutMain){   //Si no se ha acabado la bateria principal
-            activeW1 = curState[0] != 0;
-            activeW2 = curState[1] != 0;
-            activeW3 = curState[2] != 0;
-            activeW4 = curState[3] != 0;
-        }
+        //TODO: Cambiar todo para medir baterias rueda a rueda con batteryValues 
+        //TODO: Check mecanicas de conduccion
+        //TODO: Harreglar luces
+        if(voltajes[0] <= 0){
+            if(activeW1){
+                activeW1 = false;
+                blink[5] = 0;
+            }
+            if(pasState[0] == 0  && curState[0] != 0){
+                blink[5] = 0;
+            }
+        }else activeW1 = curState[0] != 0;
+        if(voltajes[1] <= 0){
+            if(activeW2){
+                activeW2 = false;
+                blink[6] = 0;
+            }
+            if(pasState[1] == 0  && curState[1] != 0){
+                blink[6] = 0;
+            }
+        }else activeW2 = curState[1] != 0;
+        if(voltajes[2] <= 0){
+            if(activeW3){
+                activeW3 = false;
+                blink[7] = 0;
+            }
+            if(pasState[2] == 0  && curState[2] != 0){
+                blink[7] = 0;
+            }
+        }else activeW3 = curState[2] != 0;
+        if(voltajes[3] <= 0){
+            if(activeW4){
+                activeW4 = false;
+                blink[8] = 0;
+            }
+            if(pasState[3] == 0  && curState[3] != 0){
+                blink[8] = 0;
+            }
+        }else activeW4 = curState[3] != 0;
         
         //Modo tanque
         if((pasState[11] == 0 && curState[11] != 0) || tanque){ //Se ha activado el modo tanque o ya está activado
@@ -279,13 +328,12 @@ public class Controller {
         }
         
         //Potencia de las ruedas
-        //Empeza con la potencia coarse
         float powerW1, powerW2, powerW3, powerW4;
         powerW1 = powerW2 = powerW3 = powerW4 = byte2float(curState[24]);  //Potencia coarse
         if(tanque){ //Conduccion modo tanque, ocho direcciones
             boolean powerD, powerI, dirD, dirI;
             int x, y;
-            
+            //TODO: Revisar el modo tanque
             //Un pequeño filtro
             if(curState[18] < STALL_UMBRAL && curState[18] > -STALL_UMBRAL)
                 y = 0;
@@ -346,15 +394,10 @@ public class Controller {
                 dirI = true;
             }
             
-            float maxPowerW;
-            if(curState[10] != 0 && (!dirD || !dirI))  //Si Safe Frenada esta activda y alguna gira hacia atras
-                maxPowerW = 0.5f;  //Reducir a la mitad la potencia maxima
-            else maxPowerW = 1.0f;
-            
-            powerW1 *= powerI?maxPowerW:0.0f; //Aplicar
-            powerW2 *= powerD?maxPowerW:0.0f;
-            powerW3 *= powerI?maxPowerW:0.0f;
-            powerW4 *= powerD?maxPowerW:0.0f;
+            powerW1 *= powerI?1.0f:0.0f; //Aplicar
+            powerW2 *= powerD?1.0f:0.0f;
+            powerW3 *= powerI?1.0f:0.0f;
+            powerW4 *= powerD?1.0f:0.0f;
             sendData[4] = (byte)(dirI?1:0);
             sendData[5] = (byte)(dirD?1:0);
             sendData[6] = (byte)(dirI?1:0);
@@ -362,17 +405,14 @@ public class Controller {
             
         }else{  //Conduccion con PAN de direccion
             float fineTune;
-            if(curState[18] < STALL_UMBRAL){// Hacia atras
-                fineTune = ((float)-curState[18])/128.0f;   //Potencia fine tune
+            if(curState[18] >= 0 && curState[18] < 127 - STALL_UMBRAL){// Hacia atras
+                fineTune = 1.0f+(((float)-curState[18])/120.0f);   //Potencia fine tune
                 sendData[4] = 0;    //Todo hacia atras
                 sendData[5] = 0;
                 sendData[6] = 0;
                 sendData[7] = 0;
-                if(curState[10] != 0){  //Si Safe Frenada esta activda
-                    fineTune /= 2.0f; //La velocidad se reduce a la mitad
-                }
-            }else if(curState[18] > STALL_UMBRAL){// Hacia delante
-                fineTune = ((float)curState[18])/127.0f;    //Potencia fine tune
+            }else if(curState[18] < 0 && curState[18] > STALL_UMBRAL - 128){// Hacia delante
+                fineTune = 1.0f+(((float)curState[18])/120.0f);    //Potencia fine tune
                 sendData[4] = 1;    //Todo hacia delante
                 sendData[5] = 1;
                 sendData[6] = 1;
@@ -381,27 +421,20 @@ public class Controller {
                 fineTune = 0.0f;
                 //El sentido da igual
             }
-            powerW1 *= fineTune;    //Aplicar el fienTune
+            if(fineTune > 1.0f) fineTune = 1.0f;
+            powerW1 *= fineTune;    //Aplicar el fineTune
             powerW2 *= fineTune;
             powerW3 *= fineTune;
             powerW4 *= fineTune;
             
             float steerTuneI;
             float steerTuneD;
-            if(curState[19] < STALL_UMBRAL){// Hacia la izquierda
-                steerTuneI = ((float)-curState[19])/128.0f;
+            if(curState[19] >= 0 && curState[19] < 127 - STALL_UMBRAL*3){// Hacia la izquierda
+                steerTuneI = ((float)curState[19])/128.0f;
                 steerTuneD = 1.0f;
-                sendData[4] = 0;    //Todo hacia atras
-                sendData[5] = 0;
-                sendData[6] = 0;
-                sendData[7] = 0;
-            }else if(curState[19] > STALL_UMBRAL){// Hacia la derecha
+            }else if(curState[19] < 0 && curState[19] > STALL_UMBRAL*3 - 128){// Hacia la derecha
                 steerTuneI = 1.0f;
-                steerTuneD = ((float)curState[19])/127.0f;
-                sendData[4] = 1;    //Todo hacia delante
-                sendData[5] = 1;
-                sendData[6] = 1;
-                sendData[7] = 1;
+                steerTuneD = ((float)-curState[19])/127.0f;
             }else{ //Quieto
                 steerTuneI = 1.0f;
                 steerTuneD = 1.0f;
@@ -421,6 +454,7 @@ public class Controller {
                 powerW2 *= ((float)curState[22])/127.0f;
             }
         }
+        //System.out.println("W1: "+powerW1+" W2: "+powerW2+" W3: "+powerW3+" W4: "+powerW4+"     X: "+curState[18]+" Y: "+curState[19]);
         sendData[0] = float2byte(powerW1);  //Asignar las potencias
         sendData[1] = float2byte(powerW2);
         sendData[2] = float2byte(powerW3);
@@ -437,17 +471,10 @@ public class Controller {
                 sendData[6] = (byte)1;
                 sendData[7] = (byte)1;
             }else if(curState[15] != 0){    //Turvo hacia detras
-                if(curState[10] != 0){  //Si Safe Frenada esta activada, no hay tanto turbo
-                    sendData[0] = (byte)127;
-                    sendData[1] = (byte)127;
-                    sendData[2] = (byte)127;
-                    sendData[3] = (byte)127;
-                }else{
-                    sendData[0] = (byte)255;
-                    sendData[1] = (byte)255;
-                    sendData[2] = (byte)255;
-                    sendData[3] = (byte)255;
-                }
+                sendData[0] = (byte)255;
+                sendData[1] = (byte)255;
+                sendData[2] = (byte)255;
+                sendData[3] = (byte)255;
                 sendData[4] = (byte)0;
                 sendData[5] = (byte)0;
                 sendData[6] = (byte)0;
@@ -469,51 +496,21 @@ public class Controller {
         
         
         //LEDs
-        if(burnOutMain){
-            outBuffer[1] = 0;
-            outBuffer[2] = 0;
-            outBuffer[3] = 0;
-            outBuffer[4] = 0;
-            outBuffer[5] = 1;
-            outBuffer[6] = 1;
-            outBuffer[7] = 1;
-            outBuffer[8] = 1;
-        }else{
-            if(curState[0] == 0){
-                outBuffer[1] = 0;
-                outBuffer[5] = 1;
-            }else{
-                outBuffer[1] = 1;
-                outBuffer[5] = 0;
-            }
-            if(curState[1] == 0){
-                outBuffer[2] = 0;
-                outBuffer[6] = 1;
-            }else{
-                outBuffer[2] = 1;
-                outBuffer[6] = 0;
-            }
-            if(curState[2] == 0){
-                outBuffer[3] = 0;
-                outBuffer[7] = 1;
-            }else{
-                outBuffer[3] = 1;
-                outBuffer[7] = 0;
-            }
-            if(curState[3] == 0){
-                outBuffer[4] = 0;
-                outBuffer[8] = 1;
-            }else{
-                outBuffer[4] = 1;
-                outBuffer[8] = 0;
-            }
-        }
+        outBuffer[1] = (byte)(activeW1?1:0);
+        outBuffer[2] = (byte)(activeW2?1:0);
+        outBuffer[3] = (byte)(activeW3?1:0);
+        outBuffer[4] = (byte)(activeW4?1:0);
+        outBuffer[5] = (byte)(activeW1?0:1);
+        outBuffer[6] = (byte)(activeW2?0:1);
+        outBuffer[7] = (byte)(activeW3?0:1);
+        outBuffer[8] = (byte)(activeW4?0:1);
+        
         if(tanque){
-            outBuffer[19] = 0;
-            outBuffer[20] = 1;
-        }else{
             outBuffer[19] = 1;
             outBuffer[20] = 0;
+        }else{
+            outBuffer[19] = 0;
+            outBuffer[20] = 1;
         }
         //Modulos. Si es null o el estado es 0 se enciente en rojo, si el estado es 1 parpadea el rojo, si el estado es 2 se queda fijo el verde
         if(wifi == null || wifi.check() == 0){
@@ -566,7 +563,6 @@ public class Controller {
             outBuffer[13] = 1;
             outBuffer[18] = 0;
         }
-        
         
         
         //Mecanismo de blink
@@ -670,7 +666,7 @@ public class Controller {
         }
         for(int i = 18; i >= 14; i--){
             for(int j = 14; j <= 18; j++)
-                outBuffer[j] = (byte) (i>=j?1:0);
+                outBuffer[j] = (byte) (i>j?1:0);
             port.writeBytes(outBuffer, BYTES_OUT);
             try {Thread.sleep(250);} catch (Exception e) {}
         }

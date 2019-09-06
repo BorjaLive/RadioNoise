@@ -1,7 +1,10 @@
 #include<Servo.h>
 
-#define PIN_Voltaje_Baterias A15
-#define PIN_Voltaje_Pilas A14
+#define PIN_Voltaje_Bateria_1 A15
+#define PIN_Voltaje_Bateria_2 A14
+#define PIN_Voltaje_Bateria_3 A13
+#define PIN_Voltaje_Bateria_4 A12
+#define PIN_Voltaje_Pilas A11
 #define PIN_Camara_Z 7
 #define PIN_Camara_Y 6
 #define PIN_LED_Modulo_Controller 26
@@ -23,11 +26,11 @@
 
 #define PORT_SPEED 9600
 #define BYTES_IN 15
-#define BYTES_OUT 5
+#define BYTES_OUT 6
 
 Servo servoZ, servoY;
 
-const int voltajesSensors = 2;
+const int voltajesSensors = 5;
 int voltajesSuma[voltajesSensors];
 int voltajesTomas;
 int voltajesDelay;
@@ -83,7 +86,7 @@ void loop() {
         Serial.write(last?0:1);
         last = !last;
       }
-    }else if(buffIN[0] == 2){
+    }else if(buffIN[0] == 2 || buffIN[0] == 3){
       //RECIVE: hay que cambiar las salidas
       analogWrite(PIN_PWM_1, buffIN[1]);    //Bit 1
       analogWrite(PIN_PWM_2, buffIN[2]);    //Bit 2
@@ -142,30 +145,32 @@ void loop() {
       digitalWrite(PIN_LED_Modulo_AudioIN, buffIN[7]==0?LOW:HIGH);            //Bit 11
       digitalWrite(PIN_LED_Modulo_AudioOUT, buffIN[8]==0?LOW:HIGH);           //Bit 12
       //Los bits 13 y 14 son sobrantes
-    }else if(buffIN[0] == 3){
+    }
+    if(buffIN[0] == 3){
       //SEND: Leer las entradas y enviarlas
       //Aqui hay que enviar los voltajes, que es complicado
       Serial.write((byte)voltajesLast[0]);             //Bit 0
       Serial.write((byte)voltajesLast[1]);             //Bit 1
-      Serial.write((byte)0);                           //Bit 2
-      Serial.write((byte)0);                           //Bit 3
-      Serial.write((byte)0);                           //Bit 4
-    }else{
-      //Debe ser un error en la transferencia, es raro
-      Serial.write("ERROR");
+      Serial.write((byte)voltajesLast[2]);             //Bit 2
+      Serial.write((byte)voltajesLast[3]);             //Bit 3
+      Serial.write((byte)voltajesLast[4]);             //Bit 4
+      Serial.write((byte)0);                           //Bit 5
     }
   }
 
   if(voltajesDelay == VOLTAJE_DELAY){
     if(voltajesTomas == VOLTAJE_TOMAS){
       for(int i = 0; i < voltajesSensors; i++){
-        voltajesLast[i] = voltajesSuma[i]/(VOLTAJE_TOMAS*4);
+        voltajesLast[i] = voltajesSuma[i]/VOLTAJE_TOMAS;
         voltajesSuma[i] = 0;
       }
     }else{
       voltajesTomas++;
-      voltajesSuma[0] += analogRead(PIN_Voltaje_Baterias);
-      voltajesSuma[1] += analogRead(PIN_Voltaje_Pilas);
+      voltajesSuma[0] += analogRead(PIN_Voltaje_Bateria_1);
+      voltajesSuma[1] += analogRead(PIN_Voltaje_Bateria_2);
+      voltajesSuma[2] += analogRead(PIN_Voltaje_Bateria_3);
+      voltajesSuma[3] += analogRead(PIN_Voltaje_Bateria_4);
+      voltajesSuma[4] += analogRead(PIN_Voltaje_Pilas);
     }
     voltajesDelay = 0;
   }else voltajesDelay++;

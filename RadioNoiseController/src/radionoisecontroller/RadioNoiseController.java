@@ -17,7 +17,6 @@ public class RadioNoiseController {
                 Controller.setAudioInterface();
                 while(CUSTOM_AUDIO_DEVICE) sleep(CTRL_DELAY);
             }
-            System.out.println("CONINUED");
             MultiWindow windows = new MultiWindow(2);
             windows.start();
             

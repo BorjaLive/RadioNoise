@@ -8,14 +8,14 @@ public class global {
     static String ARDUINO_PORT = "/dev/ttyACM0";
     //public static final String ARDUINO_PORT = "COM4";
     public static final boolean ARDUINO_OVERRIDE = true;
-    public static int BYTES_IN = 5, BYTES_OUT = 15;
+    public static int BYTES_IN = 6, BYTES_OUT = 15;
     
     public static String SERVER_IP = "192.168.0.5";
     public static final int CONTROL_PORT = 4421;
     public static final int VIDEO_PORT = 4422;
     public static final int AUDIOIN_PORT = 4424;
     public static final int AUDIOOUT_PORT = 4423;
-    public static int BYTES_SEND = 5, BYTES_RECIVE = 18;
+    public static int BYTES_SEND = 6, BYTES_RECIVE = 18;
     public static int SEND_DELAY = 10, CTRL_DELAY = 5, RECV_DELAY = 5;
     public static final int IMAGE_BUFFER_SIZE = 60*1024, AUDIO_BUFFER_SIZE = 1024, AUDIO_CHUNK_SIZE = 1024;
     public static final int VIDEO_FRAMERATE = 10;
@@ -27,9 +27,6 @@ public class global {
     public static final String DEVICE_AUDIO_OUT = "Device [plughw:2,0]";
     //public static final String DEVICE_AUDIO_IN = "Micrófono (Realtek High Definit";
     //public static final String DEVICE_AUDIO_OUT = "Altavoces (Realtek High Definition Audio)";
-    
-    public static final float VOLTAJE_MAIN_MIN = 10.08f, VOLTAJE_MAIN_MAX = 12.06f, VOLTAJE_SERVO_MIN = 4.8f, VOLTAJE_SERVO_MAX = 6.48f;
-    public static final float VOLTAJE_DIVIDER_CONSTANT = 11f; //TODO: Modificar con las medidas reales
     
     
     

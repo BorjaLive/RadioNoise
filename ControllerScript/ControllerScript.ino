@@ -8,7 +8,7 @@
 #define PIN_Modulo_AudioIN 36
 #define PIN_Modulo_AudioOUT 38
 #define PIN_Activar_PAN 40
-#define PIN_Activar_Safe 42
+#define PIN_Activar_BatteryView 42
 #define PIN_Activar_Tanque 44
 #define PIN_Activar_Turbo 46
 #define PIN_Boton_Turbo 48
@@ -51,7 +51,7 @@
 
 #define PORT_SPEED 9600
 #define BYTES_IN 22
-#define BYTES_OUT 35
+#define BYTES_OUT 30
 
 void setup() {
   pinMode(PIN_Ready, OUTPUT);
@@ -67,7 +67,7 @@ void setup() {
   pinMode(PIN_Modulo_AudioIN, INPUT);
   pinMode(PIN_Modulo_AudioOUT, INPUT);
   pinMode(PIN_Activar_PAN, INPUT);
-  pinMode(PIN_Activar_Safe, INPUT);
+  pinMode(PIN_Activar_BatteryView, INPUT);
   pinMode(PIN_Activar_Tanque, INPUT);
   pinMode(PIN_Activar_Turbo, INPUT);
   pinMode(PIN_Boton_Turbo, INPUT_PULLUP);
@@ -124,7 +124,7 @@ void loop() {
         Serial.write(last?0:1);
         last = !last;
       }
-    }else if(buffIN[0] == 2){
+    }else if(buffIN[0] == 2 || buffIN[0] == 3){
       //RECIVE: hay que cambiar las salidas
       digitalWrite(PIN_LED_verde_rueda_1, buffIN[1]==0?LOW:HIGH);             //Bit 1
       digitalWrite(PIN_LED_verde_rueda_2, buffIN[2]==0?LOW:HIGH);             //Bit 2
@@ -147,7 +147,8 @@ void loop() {
       digitalWrite(PIN_LED_verde_tanque, buffIN[19]==0?LOW:HIGH);             //Bit 19
       digitalWrite(PIN_LED_rojo_tanque, buffIN[20]==0?LOW:HIGH);              //Bit 20
       //El bit 21 es sobrante
-    }else if(buffIN[0] == 3){
+    }
+    if(buffIN[0] == 3){
       //SEND: Leer las entradas y enviarlas
       Serial.write(digitalRead(PIN_Rueda_1));             //Bit 0
       Serial.write(digitalRead(PIN_Rueda_2));             //Bit 1
@@ -159,7 +160,7 @@ void loop() {
       Serial.write(digitalRead(PIN_Modulo_Controller));   //Bit 7
       Serial.write(digitalRead(PIN_Modulo_Wifi));         //Bit 8
       Serial.write(digitalRead(PIN_Activar_PAN));         //Bit 9
-      Serial.write(digitalRead(PIN_Activar_Safe));        //Bit 10
+      Serial.write(digitalRead(PIN_Activar_BatteryView));        //Bit 10
       Serial.write(digitalRead(PIN_Activar_Tanque));      //Bit 11
       Serial.write(digitalRead(PIN_Activar_Turbo));       //Bit 12
       //Los botones estan invertidos al usar internal pullup
@@ -182,9 +183,6 @@ void loop() {
       Serial.write(digitalRead(PIN_Salir));       //Bit 28
       //Bytes sobrandes, puestos ahí porque quizas amplie luego
       Serial.write((byte)0);                      //Bit 29
-    }else{
-      //Debe ser un error en la transferencia, es raro
-      Serial.write("ERROR");
     }
     
     digitalWrite(PIN_Ready, HIGH);

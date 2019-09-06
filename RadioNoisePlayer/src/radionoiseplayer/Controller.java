@@ -177,9 +177,11 @@ public class Controller {
     */
     private static void drive(){
         //Enviar los voltajes medidos
-        float voltaje_main = byte2float(curState[0])*VOLTAJE_DIVIDER_CONSTANT, voltaje_servo = byte2float(curState[1])*VOLTAJE_DIVIDER_CONSTANT;
-        sendData[0] = (byte) (((voltaje_main-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN))*255);
-        sendData[1] = (byte) (((voltaje_servo-VOLTAJE_SERVO_MIN)/(VOLTAJE_SERVO_MAX-VOLTAJE_SERVO_MIN))*255);
+        sendData[0] = curState[0];
+        sendData[1] = curState[1];
+        sendData[2] = curState[2];
+        sendData[3] = curState[3];
+        sendData[4] = curState[4];
         
         //Movimiento de las ruedas
         outBuffer[1] = recvData[0];

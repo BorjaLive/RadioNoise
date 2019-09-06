@@ -1,5 +1,6 @@
 
 
+
 # RadioNoise TCP/IP Vehicle Controller
 Software para controlar un vehículo radio-control con Raspberry Pi y Arduino, acompañado de diagramas de hardware.
 ## Índice
@@ -50,7 +51,7 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 7 | Toggle modulo Controller |
 | 8 | Toggle modulo Wifi |
 | 9 | Toggle PAN de tracción |
-| 10 | Toggle Safe frenada |
+| 10 | Toggle Battery View |
 | 11 | Toggle Modo tanque |
 | 12 | Toggle Turbo |
 | 13 | Button Audio OUT activar |
@@ -102,15 +103,16 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 21 | NO SE USA |
 
 ### Arduino -> RPI 3  Vehículo
-Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El tamaño del buffer es de 5 bytes.
+Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El tamaño del buffer es de 6 bytes.
 
 | Posición | Uso |
 |--|--|
-| 0 | Voltaje Motores (24v) |
-| 1 | Voltaje Servos (6v) |
-| 2 | NO SE USA |
-| 3 | NO SE USA |
-| 4 | NO SE USA |
+| 0 | Voltaje Motor 1 (11.1v) |
+| 1 | Voltaje Motor 1 (11.1v) |
+| 2 | Voltaje Motor 1 (11.1v) |
+| 3 | Voltaje Motor 1 (11.1v) |
+| 4 | Voltaje Servos (7.5v) |
+| 5 | NO SE USA |
 
 ### RPI 3 -> Arduino Vehículo
 Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El tamaño del buffer es de 15 bytes.
@@ -164,15 +166,16 @@ El mando envía 18 bytes.
 | 17 | NO SE USA |
 
 #### RPI3 Verhiculo -> RPI4 Mando
-El vehículo envía 5 bytes.
+El vehículo envía 6 bytes.
 
 | Posición | Uso |
 |--|--|
-| 0 | Voltaje baterias |
-| 1 | Voltaje pilas |
-| 2 | NO SE USA |
-| 3 | NO SE USA |
-| 4 | NO SE USA |
+| 0 | Voltaje batería 1|
+| 1 | Voltaje batería 1|
+| 2 | Voltaje batería 1|
+| 3 | Voltaje batería 1|
+| 4 | Voltaje pilas |
+| 5 | NO SE USA |
 
 #### Video
 Una vez se establece la conxión el servidor toma 10 fotografías por segundo de 640x480, primero envía el tamaño del frame comprimido con jpeg (usando 4 bytes) y luego envía el frame completo en un solo paquete. El cliente las recibe y muestra por pantalla.
@@ -196,7 +199,7 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | D 36 IN | Toggle Module Audio IN |
 | D 38 IN | Toggle Module Audio OUT |
 | D 40 IN | Toggle PAN de tracción |
-| D 42 IN | Toggle Safe frenada |
+| D 42 IN | Toggle Battery View |
 | D 44 IN | Toggle Modo tanque |
 | D 46 IN | Toggle Turbo activado |
 | D 48 IN | Button Turbo |
@@ -239,26 +242,25 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 
 | Pin y modo | Uso |
 |--|--|
-| A 15 IN | Tensión Motores (24v) |
-| A 14 IN | Tensión Servos (6v) |
-| D 7 OUT | Control Servo cámara Z |
-| D 6 OUT | Control Servo cámara Y |
+| A 15 IN | Tensión Motor 1 (11.1v) |
+| A 14 IN | Tensión Motor 2 (11.1v) |
+| A 13 IN | Tensión Motor 3 (11.1v) |
+| A 12 IN | Tensión Motor 4 (11.1v) |
+| A 11 IN | Tensión Servos (7.5v) |
 | D 26 OUT | LED Azul Module Controller |
 | D 28 OUT | LED Azul Module Video |
 | D 30 OUT | LED Azul Module Audio IN |
 | D 32 OUT | LED Azul Module Audio OUT |
-| D 12 OUT | Potencia motor 1 |
-| D 11 OUT | Potencia motor 2 |
-| D 10 OUT | Potencia motor 3 |
-| D 9 OUT | Potencia motor 4 |
-| D 31 OUT | Sentido 1 motor 1 |
-| D 33 OUT | Sentido 2 motor 1 |
-| D 35 OUT | Sentido 1 motor 2 |
-| D 37 OUT | Sentido 2 motor 2 |
-| D 39 OUT | Sentido 1 motor 3 |
-| D 41 OUT | Sentido 2 motor 3 |
-| D 43 OUT | Sentido 1 motor 4 |
-| D 45 OUT | Sentido 2 motor 4 |
+| D 2 OUT | Potencia motor 1 R |
+| D 3 OUT | Potencia motor 1 L |
+| D 4 OUT | Potencia motor 2 R |
+| D 5 OUT | Potencia motor 2 L |
+| D 6 OUT | Potencia motor 3 R |
+| D 7 OUT | Potencia motor 3 L |
+| D 8 OUT | Potencia motor 4 R |
+| D 9 OUT | Potencia motor 4 L |
+| D 10 OUT | Control Servo cámara Z |
+| D 11 OUT | Control Servo cámara Y |
 
 ### LEDs
 Todos los leds consumen 20 mA, por seguridad se considera 17 mA.
@@ -268,7 +270,7 @@ Todos los leds consumen 20 mA, por seguridad se considera 17 mA.
 | Verde 5mm | 3.0 - 3.4 |
 | Rojo 5mm | 2.8 - 3.1 |
 | Azul 5mm | 3.0 - 3.4 |
-Es por esto que se ha decidido usar dos resistencias en serie de 100 y 22 ohm para los verdes (Calculada entre 130 y 95 ) y 100 ohm para los rojos y azules (Calculada entre 120 y 80).
+Es por esto que se ha decidido usar una resistencia de 150 ohm para los rojos (Calculada entre 130 y 95 ) y 100 ohm para los verdes y azules (Calculada entre 120 y 80).
 La potencia disipada por las resistencias no excede los 50 mW, que es inferior a su límite de 1/4 W. La tolerancia es de 1%.
 
 ### Chasis
