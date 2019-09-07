@@ -197,13 +197,15 @@ public class WindowManager {
             this.wlan_signal.setPowerW(0);
         else
             this.wlan_signal.setPowerW((int) (100+((wlan_signal)*(10.0f/11.0f))));
-        //TODO: Revisar la conversion de los voltajes
+        
         batteryValues[0] = (voltajes[0]-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN);
         batteryValues[1] = (voltajes[1]-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN);
         batteryValues[2] = (voltajes[2]-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN);
         batteryValues[3] = (voltajes[3]-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN);
+        for(int i = 0; i < 4; i++) if(batteryValues[i] > 1.0f) batteryValues[i] = 1.0f;
         float battery_mean_p = (batteryValues[0]+batteryValues[1]+batteryValues[2]+batteryValues[3])/4;
         float battery_servo_p = (voltajes[4]-VOLTAJE_SERVO_MIN)/(VOLTAJE_SERVO_MAX-VOLTAJE_SERVO_MIN);
+        if(battery_servo_p > 1.0f) battery_servo_p = 1.0f;
         battery_main.setPowerW(battery_mean_p);
         battery_1.setPowerW(batteryValues[0]);
         battery_2.setPowerW(batteryValues[1]);

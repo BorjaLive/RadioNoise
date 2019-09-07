@@ -48,7 +48,6 @@ public class module_audioIN extends module{
             }
 
             state = 1;
-            int tryes = CONNECTION_RETRYS;
             
             cliente.connect(SERVER_IP, AUDIOIN_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
 

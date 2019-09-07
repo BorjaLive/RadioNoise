@@ -5,6 +5,7 @@ import static java.awt.Component.CENTER_ALIGNMENT;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 import radionoisecontroller.modules.*;
 import static radionoisecontroller.global.*;
@@ -21,7 +22,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 public class Controller {
-    private static byte[] curState, pasState; //TODO: declararlos en el iniciate
+    private static byte[] curState, pasState;
     private static module_controller controller;
     private static module_video video;
     private static module_audioIN audioIN;
@@ -112,13 +113,12 @@ public class Controller {
         System.arraycopy(curState, 0, pasState, 0, curState.length);
         data_exchange(outBuffer, curState);
         
-        //TODO: Toda la logica
         //Simular baterias
-        recvData[0] = (byte)200;
-        recvData[1] = (byte)190;
-        recvData[2] = (byte)180;
-        recvData[3] = (byte)170;
-        recvData[4] = (byte)100;
+        recvData[0] = (byte)250;
+        recvData[1] = (byte)230;
+        recvData[2] = (byte)210;
+        recvData[3] = (byte)190;
+        recvData[4] = (byte)180;
         
         //Suavizar potenciometros
         for(int i = 22; i<= 27; i++){
@@ -193,11 +193,7 @@ public class Controller {
         //Actualizaciones de controles
         drive();
         
-        //TODO: Actualizar los volumenes
-        sendData[11] = curState[7];
-        
         //Actualizar voltajes
-        //TODO: Revisar la conversion de voltajes
         voltajes[0] = byte2float(recvData[0])*VOLTAJE_DIVIDER_CONSTANT_1;
         voltajes[1] = byte2float(recvData[1])*VOLTAJE_DIVIDER_CONSTANT_2;
         voltajes[2] = byte2float(recvData[2])*VOLTAJE_DIVIDER_CONSTANT_3;
@@ -216,8 +212,6 @@ public class Controller {
     }
     
     public static void stop(){
-        port.closePort();
-        
         if(controller != null){
             controller.interrupt();
             controller = null;
@@ -239,6 +233,19 @@ public class Controller {
             wifi.interrupt();
             wifi = null;
         }
+        
+        for(int i = 1; i <= 20; i++){
+            outBuffer[i] = (byte)0;
+        }
+        outBuffer[0] = (byte)3;
+        port.writeBytes(outBuffer, outBuffer.length);
+        
+        try {
+            sleep(500);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        port.closePort();
     }
     
     public static void setWindowManager(WindowManager WM){
@@ -274,9 +281,6 @@ public class Controller {
     */
     private static void drive(){
         //Activacion de ruedas
-        //TODO: Cambiar todo para medir baterias rueda a rueda con batteryValues 
-        //TODO: Check mecanicas de conduccion
-        //TODO: Harreglar luces
         if(voltajes[0] <= 0){
             if(activeW1){
                 activeW1 = false;
@@ -333,61 +337,74 @@ public class Controller {
         if(tanque){ //Conduccion modo tanque, ocho direcciones
             boolean powerD, powerI, dirD, dirI;
             int x, y;
-            //TODO: Revisar el modo tanque
             //Un pequeño filtro
-            if(curState[18] < STALL_UMBRAL && curState[18] > -STALL_UMBRAL)
+            if((curState[18] >= 0 && curState[18] > 127 - STALL_UMBRAL) || (curState[18] < 0 && curState[18] < STALL_UMBRAL - 128))
                 y = 0;
-            else y = (int)curState[18];
-            if(curState[19] < STALL_UMBRAL && curState[19] > -STALL_UMBRAL)
+            else{
+                y = (int)curState[18];
+                if(y < 0){
+                    y += 127;
+                }else{
+                    y -= 128;
+                }
+            }
+            if((curState[19] >= 0 && curState[19] > 127 - STALL_UMBRAL*2) || (curState[19] < 0 && curState[19] < STALL_UMBRAL*2 - 128))
                 x = 0;
-            else x = curState[19];
+            else{
+                x = (int)curState[19];
+                if(x < 0){
+                    x += 127;
+                }else{
+                    x -= 128;
+                }
+            }
             
             if(x == 0 && y == 0){ //Quieto parado
-                powerD = false;
                 powerI = false;
-                dirD = true;
+                powerD = false;
                 dirI = true;
-            }else if(x > -2*x && y > 2*x){  //Delante
-                powerD = true;
+                dirD = true;
+            }else if(y > -2*x && y > 2*x){  //Delante
                 powerI = true;
-                dirD = true;
+                powerD = true;
                 dirI = true;
+                dirD = true;
             }else if(y < -2*x && y < 2*x){  //Atras
-                powerD = true;
                 powerI = true;
-                dirD = false;
+                powerD = true;
                 dirI = false;
+                dirD = false;
             }else if(x > -2*y && x > 2*y){  //Derecha
-                powerD = true;
                 powerI = true;
-                dirD = true;
-                dirI = false;
+                powerD = true;
+                dirI = true;
+                dirD = false;
             }else if(x < -2*y && x < 2*y){  //Izquierda
-                powerD = true;
                 powerI = true;
-                dirD = false;
-                dirI = true;
-            }else if(y < 2*x && x < 2*y){   //Delante Derecha
                 powerD = true;
-                powerI = false;
-                dirD = true;
-                dirI = true;
-            }else if(y > 2*x && x > 2*y){   //Atras Izquierda
-                powerD = true;
-                powerI = false;
-                dirD = false;
-                dirI = true;
-            }else if(y < -2*x && x > -2*y){ //Delante Izquierda
-                powerD = false;
-                powerI = true;
-                dirD = true;
-                dirI = true;
-            }else if(y > -2*x && x < -2*y){ //Atras Derecha
-                powerD = false;
-                powerI = true;
-                dirD = true;
                 dirI = false;
-            }else{  //Esto es un como si estuviera parado
+                dirD = true;
+            }else if(y < 2*x && x < 2*y){   //Delante Derecha
+                powerI = true;
+                powerD = false;
+                dirI = true;
+                dirD = true;
+            }else if(y > 2*x && x > 2*y){   //Atras Izquierda
+                powerI = false;
+                powerD = true;
+                dirI = true;
+                dirD = false;
+            }else if(y < -2*x && x > -2*y){ //Delante Izquierda
+                powerI = false;
+                powerD = true;
+                dirI = true;
+                dirD = true;
+            }else if(y > -2*x && x < -2*y){ //Atras Derecha
+                powerI = true;
+                powerD = false;
+                dirI = false;
+                dirD = true;
+            }else{  //Parado
                 powerD = false;
                 powerI = false;
                 dirD = true;
@@ -398,6 +415,7 @@ public class Controller {
             powerW2 *= powerD?1.0f:0.0f;
             powerW3 *= powerI?1.0f:0.0f;
             powerW4 *= powerD?1.0f:0.0f;
+            //System.out.println("W1: "+(powerW1*(dirI?1:-1))+" W2: "+(powerW2*(dirD?1:-1))+" W3: "+(powerW3*(dirI?1:-1))+" W4: "+(powerW4*(dirD?1:-1))+"     X: "+curState[18]+" Y: "+curState[19]+"    x: "+x+" y: "+y);
             sendData[4] = (byte)(dirI?1:0);
             sendData[5] = (byte)(dirD?1:0);
             sendData[6] = (byte)(dirI?1:0);
@@ -429,10 +447,10 @@ public class Controller {
             
             float steerTuneI;
             float steerTuneD;
-            if(curState[19] >= 0 && curState[19] < 127 - STALL_UMBRAL*3){// Hacia la izquierda
+            if(curState[19] >= 0 && curState[19] < 127 - STALL_UMBRAL*2){// Hacia la izquierda
                 steerTuneI = ((float)curState[19])/128.0f;
                 steerTuneD = 1.0f;
-            }else if(curState[19] < 0 && curState[19] > STALL_UMBRAL*3 - 128){// Hacia la derecha
+            }else if(curState[19] < 0 && curState[19] > STALL_UMBRAL*2 - 128){// Hacia la derecha
                 steerTuneI = 1.0f;
                 steerTuneD = ((float)-curState[19])/127.0f;
             }else{ //Quieto
@@ -454,13 +472,13 @@ public class Controller {
                 powerW2 *= ((float)curState[22])/127.0f;
             }
         }
-        //System.out.println("W1: "+powerW1+" W2: "+powerW2+" W3: "+powerW3+" W4: "+powerW4+"     X: "+curState[18]+" Y: "+curState[19]);
+        
         sendData[0] = float2byte(powerW1);  //Asignar las potencias
         sendData[1] = float2byte(powerW2);
         sendData[2] = float2byte(powerW3);
         sendData[3] = float2byte(powerW4);
         
-        if(curState[12] != 0){  //Si el turvo esta activado, puede olvidarse de todo lo demas
+        if(curState[12] != 0){  //Si el turbo esta activado, puede olvidarse de todo lo demas
             if(curState[14] != 0){  //Turvo hacia delante
                 sendData[0] = (byte)255;
                 sendData[1] = (byte)255;
@@ -483,13 +501,20 @@ public class Controller {
         }
         
         //Servomotores de la camara
-        if(curState[20] < STALL_UMBRAL || curState[20] > STALL_UMBRAL)
-            servoZ += curState[20]*byte2float(curState[25])*SENSIBILIDY_CONSTANT;
-        if(curState[21] < STALL_UMBRAL || curState[21] > STALL_UMBRAL)
-            servoY += curState[21]*byte2float(curState[25])*SENSIBILIDY_CONSTANT;
+        if(curState[20] >= 0 && curState[20] < 127 - STALL_UMBRAL*2)
+            servoY += byte2float(curState[25])*SENSIBILIDY_CONSTANT;
+        else if(curState[20] < 0 && curState[20] > STALL_UMBRAL*2 - 128)
+            servoY -= byte2float(curState[25])*SENSIBILIDY_CONSTANT;
         
-        if(servoZ > 180) servoZ = 180;
-        if(servoY > 180) servoY = 180;
+        if(curState[21] >= 0 && curState[21] < 127 - STALL_UMBRAL*2)
+            servoZ -= byte2float(curState[25])*SENSIBILIDY_CONSTANT;
+        else if(curState[21] < 0 && curState[21] > STALL_UMBRAL*2 - 128)
+            servoZ += byte2float(curState[25])*SENSIBILIDY_CONSTANT;
+        
+        if(servoZ > 180) servoZ = 180; else if(servoZ < 0) servoZ = 0;
+        if(servoY > 180) servoY = 180; else if(servoY < 0) servoY = 0;
+        
+        //System.out.println("ServoZ: "+servoZ+"  ServoY: "+servoY);
         
         sendData[12] = (byte)servoZ;
         sendData[13] = (byte)servoY;
@@ -578,7 +603,7 @@ public class Controller {
         
         //Claxon
         sendData[11] = curState[16]; //Activo
-        sendData[14] = curState[23]; //Potencia
+        sendData[14] = curState[23]; //Frecuencia
         
         //Volumen
         sendData[15] = curState[27]; //El volumen del vehículo
@@ -662,13 +687,13 @@ public class Controller {
             for(int j = 14; j <= 18; j++)
                 outBuffer[j] = (byte) (i>=j?1:0);
             port.writeBytes(outBuffer, BYTES_OUT);
-            try {Thread.sleep(250);} catch (Exception e) {}
+            try {Thread.sleep(100);} catch (Exception e) {}
         }
         for(int i = 18; i >= 14; i--){
             for(int j = 14; j <= 18; j++)
                 outBuffer[j] = (byte) (i>j?1:0);
             port.writeBytes(outBuffer, BYTES_OUT);
-            try {Thread.sleep(250);} catch (Exception e) {}
+            try {Thread.sleep(100);} catch (Exception e) {}
         }
     }
 }

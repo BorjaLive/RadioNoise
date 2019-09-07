@@ -7,7 +7,7 @@ import radionoisecontroller.graphics.Texture;
 public class global {
     public static final int BAUD_SPEED = 9600;
     //static String ARDUINO_PORT = "/dev/ttyACM0";
-    public static final String ARDUINO_PORT = "COM7";
+    public static final String ARDUINO_PORT = "COM3";
     public static final boolean ARDUINO_OVERRIDE = false;
     public static final int BYTES_IN = 30, BYTES_OUT = 22;
     
@@ -31,8 +31,8 @@ public class global {
     public static final int CONNECTION_RETRYS = 20, CONNECTION_WAIT_TIME = 100;
     public static final int TICKS_PER_LED_BLINK = 5, TICKS_PER_RECORDING_BLINK = 20;
     public static final int BLINK_DURATION = 5*TICKS_PER_LED_BLINK;
-    public static final int STALL_UMBRAL = 10, DIGITAL_HUMBRAL = 63, POTENCIOMETER_LOW_MARGIN = 15, POTENCIOMETER_HIGH_MARGIN = 250;
-    public static final float SENSIBILIDY_CONSTANT = 0.1f;
+    public static final int STALL_UMBRAL = 25, DIGITAL_HUMBRAL = 63, POTENCIOMETER_LOW_MARGIN = 15, POTENCIOMETER_HIGH_MARGIN = 250;
+    public static final float SENSIBILIDY_CONSTANT = 5.0f;
     public static final int TIME_TO_WAIT_BEFORE_SHOWING_THE_MIC_IS_RECORDING = 1000;
     
     public static String DEVICE_AUDIO_IN = "Device [plughw:2,0]";
