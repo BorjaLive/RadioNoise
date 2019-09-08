@@ -285,7 +285,7 @@ Cómprate un coche RC, te va a salir más barato.
 ## Instalación de  Software
 Descarga la release más reciente de [este repositorio](https://github.com/BorjaLive/RadioNoise).
 Si dispones de conocimientos en Java y Arduino, puedes intentar clonarlo y compilarlos tu mismo.
-Descarga primero las librerías jSerialComm, LWjGL3 y JavaCV para ARM. IMPORTANTE, es última no se distribuye con soporte para ARM, puedes compilarlo tu mismo; pero tarda 5 horas o puedes descargarlo ya listo desde [aquí](http://www.dalbert.net/?p=433).
+Descarga primero las librerías jSerialComm, LWjGL3 y JavaCV para ARM. IMPORTANTE, es última no se distribuye con soporte para ARM, puedes compilarlo tu mismo; pero tarda 5 horas o puedes descargarlo ya listo desde [aquí](http://alltechanalysis.blogspot.com/2015/09/installing-opencv-30-and-javacv-on.html).
 ### Arduino
 Necesitaras descargar su IDE para cargar el código.
 Descarga la versión más reciente para tu sistema operativo en [este enlace](https://www.arduino.cc/en/Main/Software). 
@@ -349,9 +349,9 @@ Escribimos
     interface=wlan1
     channel=11
     driver=nl80211
-    ssid=RadioNoise
+    ssid=MisakaNetwork
 
-Donde la interfaz es, de nuevo, vuestro adaptador de red. El canal, he eligo el 11, porque no suele estar muy poblado; pero va a depender de dónde esteis. El driver es para 802.11n o Wifi 4, así nos aseguramos que es compatible. El ssid es mera estética, le he puesto el nombre del proyecto.
+Donde la interfaz es, de nuevo, vuestro adaptador de red. El canal, he eligo el 11, porque no suele estar muy poblado; pero va a depender de dónde esteis. El driver es para 802.11n o Wifi 4, así nos aseguramos que es compatible. El ssid es mera estética, le he puesto un nombre que hace referencia al título del proyecto.
 Ahora le decimos a hostpad donde hemos puesto el archivo modificando "/etc/default/hostapd"
 Agreganis la linea "DAEMON_CONF="/etc/hostapd/hostapd.conf""
 

@@ -10,7 +10,8 @@ public class global {
     public static final boolean ARDUINO_OVERRIDE = true;
     public static int BYTES_IN = 6, BYTES_OUT = 15;
     
-    public static String SERVER_IP = "192.168.0.5";
+    //public static String SERVER_IP = "192.168.0.5";
+    public static String SERVER_IP = "localhost";
     public static final int CONTROL_PORT = 4421;
     public static final int VIDEO_PORT = 4422;
     public static final int AUDIOIN_PORT = 4424;

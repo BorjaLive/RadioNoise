@@ -6,13 +6,12 @@ import radionoisecontroller.graphics.Texture;
 
 public class global {
     public static final int BAUD_SPEED = 9600;
-    //static String ARDUINO_PORT = "/dev/ttyACM0";
-    public static final String ARDUINO_PORT = "COM3";
+    public static String ARDUINO_PORT;
     public static final boolean ARDUINO_OVERRIDE = false;
     public static final int BYTES_IN = 30, BYTES_OUT = 22;
     
-    //public static final String SERVER_IP = "192.168.1.5";
-    public static final String SERVER_IP = "192.168.0.1";
+    public static final String SERVER_IP = "localhost";
+    //public static final String SERVER_IP = "192.168.0.1";
     public static final String WLAN_INTERFACE_WIN = "TL-WN727N";
     public static final String WLAN_PROFILE_WIN = "RadioNoise";
     public static final String WLAN_INTERFACE_LINUX = "wlan0";
@@ -35,8 +34,8 @@ public class global {
     public static final float SENSIBILIDY_CONSTANT = 5.0f;
     public static final int TIME_TO_WAIT_BEFORE_SHOWING_THE_MIC_IS_RECORDING = 1000;
     
-    public static String DEVICE_AUDIO_IN = "Device [plughw:2,0]";
-    public static String DEVICE_AUDIO_OUT = "Device [plughw:2,0]";
+    public static String DEVICE_AUDIO_IN;
+    public static String DEVICE_AUDIO_OUT;
     public static boolean CUSTOM_AUDIO_DEVICE = false;
     //public static String DEVICE_AUDIO_IN = "Micrófono (Realtek High Definit";
     //public static String DEVICE_AUDIO_OUT = "Altavoces (Realtek High Definition Audio)";
@@ -78,7 +77,19 @@ public class global {
     public static final float VOLTAJE_MAIN_MIN = 9.0f, VOLTAJE_MAIN_MAX = 12.6f, VOLTAJE_SERVO_MIN = 6.2f, VOLTAJE_SERVO_MAX = 8.1f;
     public static final float VOLTAJE_DIVIDER_CONSTANT_1 = 13.66f, VOLTAJE_DIVIDER_CONSTANT_2 = 12.99f, VOLTAJE_DIVIDER_CONSTANT_3 = 13.41f, VOLTAJE_DIVIDER_CONSTANT_4 = 13.55f, VOLTAJE_DIVIDER_CONSTANT_5 = 13.34f; //TODO: Modificar con las medidas reales
     
+    public static final int WINDOW_PADDING_X = 150, WINDOW_PADDING_Y = 150;
     
+    public static void startConstants(){
+        if(System.getProperty("os.name").toUpperCase().contains("WIN")){
+            ARDUINO_PORT = "COM3";
+            DEVICE_AUDIO_IN = "";
+            DEVICE_AUDIO_OUT = "";
+        }else{
+            ARDUINO_PORT = "/dev/ttyACM0";
+            DEVICE_AUDIO_IN = "Device [plughw:2,0]";
+            DEVICE_AUDIO_OUT = "Device [plughw:2,0]";
+        }
+    }
     
     public static byte float2byte(float f){
         return (byte)(f*256.0);

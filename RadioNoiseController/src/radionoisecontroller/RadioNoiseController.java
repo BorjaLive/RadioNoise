@@ -8,6 +8,7 @@ import radionoisecontroller.modules.module_wifi;
 public class RadioNoiseController {
 
     public static void main(String[] args) throws InterruptedException {
+        startConstants();
         Controller.initiate();
         if(!(ARDUINO_OVERRIDE || Controller.arduinoTest())){
             System.err.println("No se pudo conectar con Arduino.");

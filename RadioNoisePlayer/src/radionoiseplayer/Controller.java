@@ -21,7 +21,7 @@ public class Controller {
     private static byte[] recvData, sendData;
     
     private static boolean claxon_enabled;
-    private static byte claxon_frequency;
+    private static byte claxon_frequency, pastVolume;
     
     public static boolean initiate(){
         sendData = new byte[BYTES_SEND];
@@ -29,6 +29,8 @@ public class Controller {
         outBuffer = new byte[BYTES_OUT];
         curState = new byte[BYTES_IN];
         pasState = new byte[BYTES_IN];
+        
+        pastVolume = 0;
         
         controller = new module_controller(sendData, recvData);
         controller.start();
@@ -71,10 +73,7 @@ public class Controller {
     
     public static void act(){
         System.arraycopy(curState, 0, pasState, 0, curState.length);
-        outBuffer[0] = (byte)3;
         //data_exchange(outBuffer, curState);
-        
-        //TODO: Toda la logica
         
         //Iniciar e interrumpir modulos
         if(recvData[9] == 0 && audioOUT != null){
@@ -105,8 +104,11 @@ public class Controller {
         
         drive();
         
-        //TODO: Actualizar los volumenes
-        
+        //Actualizar los volumenes
+        if(audioIN != null && recvData[15] != pastVolume){
+            audioIN.setVolume(byte2float(recvData[15]));    //Volumen propio
+            pastVolume = recvData[15];
+        }
         
         //Claxon
         if(recvData[11]==1 != claxon_enabled){
@@ -121,8 +123,6 @@ public class Controller {
         }
         
         
-        outBuffer[0] = (byte)2;
-        //port.writeBytes(outBuffer, BYTES_OUT);
         //System.out.println(Arrays.toString(recvData));
     }
     
@@ -153,11 +153,12 @@ public class Controller {
     
     
     private static void data_exchange(byte[] outBuffer, byte[] inBuffer){
+        outBuffer[0] = (byte)3;
         port.writeBytes(outBuffer, outBuffer.length);
         
         while(port.bytesAvailable() != inBuffer.length){
             try {
-                Thread.sleep(1);
+                Thread.sleep(CTRL_DELAY);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -213,13 +214,13 @@ public class Controller {
             for(int j = 9; j <= 12; j++)
                 outBuffer[j] = (byte) (i>=j?1:0);
             port.writeBytes(outBuffer, BYTES_OUT);
-            try {Thread.sleep(250);} catch (Exception e) {}
+            try {Thread.sleep(100);} catch (Exception e) {}
         }
         for(int i = 12; i >= 9; i--){
             for(int j = 9; j <= 12; j++)
-                outBuffer[j] = (byte) (i>=j?1:0);
+                outBuffer[j] = (byte) (i>j?1:0);
             port.writeBytes(outBuffer, BYTES_OUT);
-            try {Thread.sleep(250);} catch (Exception e) {}
+            try {Thread.sleep(100);} catch (Exception e) {}
         }
     }
 }

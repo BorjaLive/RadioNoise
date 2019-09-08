@@ -13,7 +13,7 @@ import javax.sound.sampled.SourceDataLine;
 
 public class module_audioIN extends module{
     private TCPclient cliente;
-    private byte[] recvBuffer_size, recvBuffer_audio;
+    private final byte[] recvBuffer_size, recvBuffer_audio;
     private FloatControl volume;
     private byte[] tone;
     private boolean claxon;

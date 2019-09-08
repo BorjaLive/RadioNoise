@@ -73,7 +73,7 @@ public class MultiWindow extends Thread{
             glClearColor(0f, 0f, 0f, 0.f);
 
             glfwShowWindow(handle);
-            glfwSetWindowPos(handle, monitorX[0], monitorY[0]);
+            glfwSetWindowPos(handle, monitorX[0]+WINDOW_PADDING_X, monitorY[0]+WINDOW_PADDING_Y);
 
             windows[i] = window;
         }
