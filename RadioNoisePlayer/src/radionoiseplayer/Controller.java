@@ -199,6 +199,10 @@ public class Controller {
         outBuffer[10] = (byte) (video == null?0:1);
         outBuffer[11] = (byte) (audioIN == null?0:1);
         outBuffer[12] = (byte) (audioOUT == null?0:1);
+        
+        //Servos de camara
+        outBuffer[13] = recvData[12];
+        outBuffer[14] = recvData[13];
     }
    
     

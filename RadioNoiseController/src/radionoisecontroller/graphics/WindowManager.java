@@ -202,8 +202,8 @@ public class WindowManager {
         batteryValues[1] = (voltajes[1]-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN);
         batteryValues[2] = (voltajes[2]-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN);
         batteryValues[3] = (voltajes[3]-VOLTAJE_MAIN_MIN)/(VOLTAJE_MAIN_MAX-VOLTAJE_MAIN_MIN);
-        for(int i = 0; i < 4; i++) if(batteryValues[i] > 1.0f) batteryValues[i] = 1.0f;
         float battery_mean_p = (batteryValues[0]+batteryValues[1]+batteryValues[2]+batteryValues[3])/4;
+        for(int i = 0; i < 4; i++) if(batteryValues[i] > 1.0f) batteryValues[i] = 1.0f;
         float battery_servo_p = (voltajes[4]-VOLTAJE_SERVO_MIN)/(VOLTAJE_SERVO_MAX-VOLTAJE_SERVO_MIN);
         if(battery_servo_p > 1.0f) battery_servo_p = 1.0f;
         battery_main.setPowerW(battery_mean_p);

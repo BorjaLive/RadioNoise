@@ -39,6 +39,10 @@ public class module_video extends module{
         
         cliente.connect(SERVER_IP, VIDEO_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
         
+        byte[] tmpBuffer = new byte[1];
+        tmpBuffer[0] = 0;
+        cliente.send(tmpBuffer);
+        
         if(cliente.check())
             state = 2;
         

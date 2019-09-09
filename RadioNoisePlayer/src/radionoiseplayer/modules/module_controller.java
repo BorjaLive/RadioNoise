@@ -57,9 +57,14 @@ public class module_controller extends module{
             while(servidor.check()){
                 if(!servidor.recive(recv))
                     break;
-                
+                //System.out.println("RECIVO: "+Arrays.toString(recv));
+                send[0] = (byte)250;
+                send[1] = (byte)230;
+                send[2] = (byte)210;
+                send[3] = (byte)190;
                 if(!servidor.send(send))
                     break;
+                //System.out.println("ENVIO: "+Arrays.toString(send));
                 
                 try{sleep(SEND_DELAY);}catch(InterruptedException e){break;}
             }

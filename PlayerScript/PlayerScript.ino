@@ -5,24 +5,20 @@
 #define PIN_Voltaje_Bateria_3 A13
 #define PIN_Voltaje_Bateria_4 A12
 #define PIN_Voltaje_Pilas A11
-#define PIN_Camara_Z 7
-#define PIN_Camara_Y 6
+#define PIN_Camara_Z 10
+#define PIN_Camara_Y 11
 #define PIN_LED_Modulo_Controller 26
 #define PIN_LED_Modulo_Video 28
 #define PIN_LED_Modulo_AudioIN 30
 #define PIN_LED_Modulo_AudioOUT 32
-#define PIN_PWM_1 12
-#define PIN_PWM_2 11
-#define PIN_PWM_3 10
-#define PIN_PWM_4 9
-#define PIN_Sentido_A1 31
-#define PIN_Sentido_B1 33
-#define PIN_Sentido_A2 35
-#define PIN_Sentido_B2 37
-#define PIN_Sentido_A3 39
-#define PIN_Sentido_B3 41
-#define PIN_Sentido_A4 43
-#define PIN_Sentido_B4 45
+#define PIN_PWM_1R 2
+#define PIN_PWM_1L 3
+#define PIN_PWM_2R 4
+#define PIN_PWM_2L 5
+#define PIN_PWM_3R 6
+#define PIN_PWM_3L 7
+#define PIN_PWM_4R 8
+#define PIN_PWM_4L 9
 
 #define PORT_SPEED 9600
 #define BYTES_IN 15
@@ -53,18 +49,14 @@ void setup() {
   pinMode(PIN_LED_Modulo_Video, OUTPUT);
   pinMode(PIN_LED_Modulo_AudioIN, OUTPUT);
   pinMode(PIN_LED_Modulo_AudioOUT, OUTPUT);
-  pinMode(PIN_PWM_1, OUTPUT);
-  pinMode(PIN_PWM_2, OUTPUT);
-  pinMode(PIN_PWM_3, OUTPUT);
-  pinMode(PIN_PWM_4, OUTPUT);
-  pinMode(PIN_Sentido_A1, OUTPUT);
-  pinMode(PIN_Sentido_B1, OUTPUT);
-  pinMode(PIN_Sentido_A2, OUTPUT);
-  pinMode(PIN_Sentido_B2, OUTPUT);
-  pinMode(PIN_Sentido_A3, OUTPUT);
-  pinMode(PIN_Sentido_B3, OUTPUT);
-  pinMode(PIN_Sentido_A4, OUTPUT);
-  pinMode(PIN_Sentido_B4, OUTPUT);
+  pinMode(PIN_PWM_1R, OUTPUT);
+  pinMode(PIN_PWM_1L, OUTPUT);
+  pinMode(PIN_PWM_2R, OUTPUT);
+  pinMode(PIN_PWM_2L, OUTPUT);
+  pinMode(PIN_PWM_3R, OUTPUT);
+  pinMode(PIN_PWM_3L, OUTPUT);
+  pinMode(PIN_PWM_4R, OUTPUT);
+  pinMode(PIN_PWM_4L, OUTPUT);
   
   Serial.begin(PORT_SPEED);
   Serial.setTimeout(50);
@@ -88,63 +80,43 @@ void loop() {
       }
     }else if(buffIN[0] == 2 || buffIN[0] == 3){
       //RECIVE: hay que cambiar las salidas
-      analogWrite(PIN_PWM_1, buffIN[1]);    //Bit 1
-      analogWrite(PIN_PWM_2, buffIN[2]);    //Bit 2
-      analogWrite(PIN_PWM_3, buffIN[3]);    //Bit 3
-      analogWrite(PIN_PWM_4, buffIN[4]);    //Bit 4
-      if(buffIN[1] == 0){                   //Bit 5
-        digitalWrite(PIN_Sentido_A1, LOW);
-        digitalWrite(PIN_Sentido_B1, LOW);
+      
+      if(buffIN[5] == 0){
+        analogWrite(PIN_PWM_1L, 0);
+        analogWrite(PIN_PWM_1R, buffIN[1]);
       }else{
-        if(buffIN[5] == 0){
-          digitalWrite(PIN_Sentido_A1, HIGH);
-          digitalWrite(PIN_Sentido_B1, LOW);
-        }else{
-          digitalWrite(PIN_Sentido_A1, LOW);
-          digitalWrite(PIN_Sentido_B1, HIGH);
-        }
+        analogWrite(PIN_PWM_1R, 0);
+        analogWrite(PIN_PWM_1L, buffIN[1]);
       }
-      if(buffIN[2] == 0){                   //Bit 6
-        digitalWrite(PIN_Sentido_A2, LOW);
-        digitalWrite(PIN_Sentido_B2, LOW);
+      if(buffIN[6] == 0){
+        analogWrite(PIN_PWM_2L, 0);
+        analogWrite(PIN_PWM_2R, buffIN[2]);
       }else{
-        if(buffIN[6] == 0){
-          digitalWrite(PIN_Sentido_A2, HIGH);
-          digitalWrite(PIN_Sentido_B2, LOW);
-        }else{
-          digitalWrite(PIN_Sentido_A2, LOW);
-          digitalWrite(PIN_Sentido_B2, HIGH);
-        }
+        analogWrite(PIN_PWM_2R, 0);
+        analogWrite(PIN_PWM_2L, buffIN[2]);
       }
-      if(buffIN[3] == 0){                   //Bit 7
-        digitalWrite(PIN_Sentido_A3, LOW);
-        digitalWrite(PIN_Sentido_B3, LOW);
+      if(buffIN[7] == 0){
+        analogWrite(PIN_PWM_3L, 0);
+        analogWrite(PIN_PWM_3R, buffIN[3]);
       }else{
-        if(buffIN[7] == 0){
-          digitalWrite(PIN_Sentido_A3, HIGH);
-          digitalWrite(PIN_Sentido_B3, LOW);
-        }else{
-          digitalWrite(PIN_Sentido_A3, LOW);
-          digitalWrite(PIN_Sentido_B3, HIGH);
-        }
+        analogWrite(PIN_PWM_3R, 0);
+        analogWrite(PIN_PWM_3L, buffIN[3]);
       }
-      if(buffIN[4] == 0){                   //Bit 8
-        digitalWrite(PIN_Sentido_A4, LOW);
-        digitalWrite(PIN_Sentido_B4, LOW);
+      if(buffIN[8] == 0){
+        analogWrite(PIN_PWM_4L, 0);
+        analogWrite(PIN_PWM_4R, buffIN[4]);
       }else{
-        if(buffIN[8] == 0){
-          digitalWrite(PIN_Sentido_A4, HIGH);
-          digitalWrite(PIN_Sentido_B4, LOW);
-        }else{
-          digitalWrite(PIN_Sentido_A4, LOW);
-          digitalWrite(PIN_Sentido_B4, HIGH);
-        }
+        analogWrite(PIN_PWM_4R, 0);
+        analogWrite(PIN_PWM_4L, buffIN[4]);
       }
-      digitalWrite(PIN_LED_Modulo_Controller, buffIN[5]==0?LOW:HIGH);         //Bit 9
-      digitalWrite(PIN_LED_Modulo_Video, buffIN[6]==0?LOW:HIGH);              //Bit 10
-      digitalWrite(PIN_LED_Modulo_AudioIN, buffIN[7]==0?LOW:HIGH);            //Bit 11
-      digitalWrite(PIN_LED_Modulo_AudioOUT, buffIN[8]==0?LOW:HIGH);           //Bit 12
-      //Los bits 13 y 14 son sobrantes
+      
+      digitalWrite(PIN_LED_Modulo_Controller, buffIN[9]==0?LOW:HIGH);
+      digitalWrite(PIN_LED_Modulo_Video, buffIN[10]==0?LOW:HIGH);
+      digitalWrite(PIN_LED_Modulo_AudioIN, buffIN[11]==0?LOW:HIGH);
+      digitalWrite(PIN_LED_Modulo_AudioOUT, buffIN[12]==0?LOW:HIGH);
+
+      servoZ.write(buffIN[13]);
+      servoY.write(buffIN[14]);
     }
     if(buffIN[0] == 3){
       //SEND: Leer las entradas y enviarlas

@@ -132,8 +132,8 @@ Esta comunicación es serial y se realiza con un intervalo objetivo de 5ms. El t
 | 10 | LED Azul Modulo Video |
 | 11 | LED Azul Modulo Audio IN |
 | 12 | LED Azul Modulo Audio OUT |
-| 13 | NO SE USA |
-| 14 | NO SE USA |
+| 13 | Angulo vista Z |
+| 14 | Angulo vista Y |
 
 ### RPI 4 mando <-> RPI 3 vehículo
 A continuación los procesos de comunicación de los diferentes módulos.

@@ -200,7 +200,6 @@ public class Controller {
         voltajes[3] = byte2float(recvData[3])*VOLTAJE_DIVIDER_CONSTANT_4;
         voltajes[4] = byte2float(recvData[4])*VOLTAJE_DIVIDER_CONSTANT_5;
         
-        
         //Actualizar pantallas
         WM.act(audioIN!=null&&audioIN.check()==2, audioOUT!=null&&audioOUT.check()==2, video!=null&&video.check()==2, controller!=null&&controller.check()==2, wifi!=null&&wifi.check()==2, audioOUT!=null&&audioOUT.getEnabled(), wlan_signal, wlan_quality, curState[26], curState[27], voltajes, curState[24], curState[18], curState[10]==1);
         

@@ -50,12 +50,14 @@ public class MultiWindow extends Thread{
         
         PointerBuffer monitors = glfwGetMonitors();
         
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
         for (int i = 0; i < windows.length; i++) {
             if(monitors.capacity() > i)
                 glfwGetMonitorPos(monitors.get(i), monitorX, monitorY);
             else monitorY[0] += 460;
 
             long handle = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "CTRLcontroller", NULL, NULL);
+
             if (handle == NULL) {
                 throw new IllegalStateException("Failed to create GLFW window");
             }
@@ -77,7 +79,6 @@ public class MultiWindow extends Thread{
 
             windows[i] = window;
         }
-        
         
         WM = new WindowManager(this);
         loaded = true;
