@@ -10,10 +10,10 @@ public class global {
     public static final boolean ARDUINO_OVERRIDE = false;
     public static final int BYTES_IN = 30, BYTES_OUT = 22;
     
-    public static final String SERVER_IP = "localhost";
-    //public static final String SERVER_IP = "192.168.0.1";
-    public static final String WLAN_INTERFACE_WIN = "TL-WN727N";
-    public static final String WLAN_PROFILE_WIN = "RadioNoise";
+    //public static final String SERVER_IP = "localhost";
+    public static final String SERVER_IP = "192.168.0.1";
+    public static final String WLAN_INTERFACE_WIN = "ALFAantena";
+    public static final String WLAN_PROFILE_WIN = "MisakaNetwork";
     public static final String WLAN_INTERFACE_LINUX = "wlan0";
     public static final int WLAN_SCANDELAY = 250;
     public static final int WLAN_SCANTIMEOUT = 100;
@@ -24,7 +24,7 @@ public class global {
     public static final int BYTES_SEND = 18, BYTES_RECIVE = 6;
     public static final int SEND_DELAY = 10;
     public static final int CTRL_DELAY = 10;
-    public static final float OS_TIMEOUT = 1000f;
+    public static final float OS_TIMEOUT = 5000f;
     public static final int IMAGE_BUFFER_SIZE = 60*1024, AUDIO_BUFFER_SIZE = 1024, AUDIO_CHUNK_SIZE = 1024;
     
     public static final int CONNECTION_RETRYS = 20, CONNECTION_WAIT_TIME = 100;
@@ -36,9 +36,7 @@ public class global {
     
     public static String DEVICE_AUDIO_IN;
     public static String DEVICE_AUDIO_OUT;
-    public static boolean CUSTOM_AUDIO_DEVICE = false;
-    //public static String DEVICE_AUDIO_IN = "Micrófono (Realtek High Definit";
-    //public static String DEVICE_AUDIO_OUT = "Altavoces (Realtek High Definition Audio)";
+    public static boolean CUSTOM_AUDIO_DEVICE = true;
     
     public static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 480;
     
@@ -77,13 +75,13 @@ public class global {
     public static final float VOLTAJE_MAIN_MIN = 9.0f, VOLTAJE_MAIN_MAX = 12.6f, VOLTAJE_SERVO_MIN = 6.2f, VOLTAJE_SERVO_MAX = 8.1f;
     public static final float VOLTAJE_DIVIDER_CONSTANT_1 = 13.66f, VOLTAJE_DIVIDER_CONSTANT_2 = 12.99f, VOLTAJE_DIVIDER_CONSTANT_3 = 13.41f, VOLTAJE_DIVIDER_CONSTANT_4 = 13.55f, VOLTAJE_DIVIDER_CONSTANT_5 = 13.34f; //TODO: Modificar con las medidas reales
     
-    public static final int WINDOW_PADDING_X = 150, WINDOW_PADDING_Y = 150;
+    public static final int WINDOW_PADDING_X = 0, WINDOW_PADDING_Y = 0;
     
     public static void startConstants(){
         if(System.getProperty("os.name").toUpperCase().contains("WIN")){
-            ARDUINO_PORT = "COM3";
-            DEVICE_AUDIO_IN = "";
-            DEVICE_AUDIO_OUT = "";
+            ARDUINO_PORT = "COM7";
+            DEVICE_AUDIO_IN = "Auriculares";
+            DEVICE_AUDIO_OUT = "Micrófono";
         }else{
             ARDUINO_PORT = "/dev/ttyACM0";
             DEVICE_AUDIO_IN = "Device [plughw:2,0]";

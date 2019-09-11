@@ -17,6 +17,7 @@ public class module_audioIN extends module{
     private FloatControl volume;
     private byte[] tone;
     private boolean claxon;
+    private float volume_range, volume_min;
     
     public module_audioIN(){
         cliente = new TCPclient();
@@ -43,7 +44,9 @@ public class module_audioIN extends module{
             speakers.start();
             
             try {
-                volume = (FloatControl)speakers.getControl(FloatControl.Type.VOLUME);
+                volume = (FloatControl)speakers.getControl(FloatControl.Type.MASTER_GAIN);
+                volume_range = volume.getMaximum() - volume.getMinimum();
+                volume_min = volume.getMinimum();
             } catch (Exception e) {
                 System.out.println("No se pudo obtener el control del volumen");
             }
@@ -78,7 +81,7 @@ public class module_audioIN extends module{
     
     public void setVolume(float v){
         if(volume != null)
-            volume.setValue(v);
+            volume.setValue((volume_range * v) + volume_min);
     }
     
     public void setClaxon(boolean c){

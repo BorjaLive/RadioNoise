@@ -18,7 +18,7 @@ public class module_wifi extends module{
         if(System.getProperty("os.name").contains("Windows")){
             //Seguro que Windows (o quizas ReactOS)
             if(!(executeWait("netsh wlan disconnect interface=\""+WLAN_INTERFACE_WIN+"\"") &&
-                    executeWait("netsh wlan connect ssid=RadioNoise interface=\""+WLAN_INTERFACE_WIN+"\" name="+WLAN_PROFILE_WIN))){
+                    executeWait("netsh wlan connect ssid=MisakaNetwork interface=\""+WLAN_INTERFACE_WIN+"\" name="+WLAN_PROFILE_WIN))){
                 state = 0;
                 return;
             }
@@ -26,20 +26,21 @@ public class module_wifi extends module{
             int calidad;
             while(!interrupted() && consecutiveFails < WLAN_SCANTIMEOUT){
                 String data = executeGet("netsh wlan show interfaces");
+                
                 if(data.equals("EXIT")) break;
                 
-                if(data == null || data.isEmpty() || data.contains("No disponible"))
+                if(data == null || data.isEmpty())
                     calidad = -1;
                 else{
                     //Venga ese parser
-                    System.out.println(data);
+                        System.out.println(data);
                     data = data.substring(data.indexOf(WLAN_INTERFACE_WIN));
+                        System.out.println(data);
                     if(data.contains("Nombre"))
                         data = data.substring(0, data.indexOf("Nombre"));
                     if(data.contains("desconectado"))
                         calidad = -1;
                     else{
-                        //System.out.println("ESTO ES LO QUE TENGO: "+data+ " de "+WLAN_INTERFACE_WIN);
                         try{
                             data = data.substring(data.indexOf("Se�al"));
                             data = data.substring(0,data.indexOf("Perfil"));
@@ -69,7 +70,7 @@ public class module_wifi extends module{
             //Seguramente Linux
             if(!(executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" up") &&
                     executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" up") &&
-                    executeWait("sudo iw dev "+WLAN_INTERFACE_LINUX+" connect RadioNoise"))){
+                    executeWait("sudo iw dev "+WLAN_INTERFACE_LINUX+" connect MisakaNetwork"))){
                 state = 0;
                 return;
             }
@@ -133,7 +134,7 @@ public class module_wifi extends module{
             while ((s = stdInput.readLine()) != null){
                 returned += s;
                 Thread.sleep(10);
-                if((System.currentTimeMillis()-time)/OS_TIMEOUT > 1){
+                if(System.currentTimeMillis()-time > OS_TIMEOUT){
                     proc.destroy();
                     return null;
                 }

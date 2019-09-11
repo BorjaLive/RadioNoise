@@ -47,38 +47,38 @@ public class module_audioOUT extends module{
             mic = (TargetDataLine) AudioSystem.getLine(info);
             mic.open(format);
             
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
             sendBuffer = new byte[AUDIO_BUFFER_SIZE];
             mic.start();
             
-            while(!isInterrupted()){
-                //Intentar aceptar la conexion
-                servidor.accept(2000);
-                if(!servidor.check())
-                    break;
-                System.out.println("Peticion aceptada, conexion realizada");
-                
-                state = 2;
-                
-                while(servidor.check() && !interrupted()){
-                    if(enabled){
-                        mic.read(sendBuffer, 0, AUDIO_CHUNK_SIZE);
-                    
-                        if(!servidor.send(sendBuffer))
-                            break;
-                    }else{
-                        if(!servidor.send(silence))
-                            break;
-                    }
-                }
-                try {sleep(5);} catch (InterruptedException ex) {
-                    Controller.reportDie(getClass());
-                    return;
-                }
-                System.out.println("El servidor se ha desconectado");                
-                servidor.disconnect();
-                state = 1;
+            //Intentar aceptar la conexion
+            servidor.accept(2000);
+            if(!servidor.check()){
+                Controller.reportDie(getClass());
+                return;
             }
+            System.out.println("Peticion aceptada, conexion realizada");
+
+            state = 2;
+
+            while(servidor.check() && !interrupted()){
+                if(enabled){
+                    mic.read(sendBuffer, 0, AUDIO_CHUNK_SIZE);
+
+                    if(!servidor.send(sendBuffer))
+                        break;
+                }else{
+                    if(!servidor.send(silence))
+                        break;
+                }
+            }
+            try {sleep(5);} catch (InterruptedException ex) {
+                Controller.reportDie(getClass());
+                return;
+            }
+            System.out.println("El servidor se ha desconectado");                
+            servidor.disconnect();
+            state = 1;
+            
             mic.close();
             servidor.shutdown();
             System.out.println("MUERE EL SERVIDOR");

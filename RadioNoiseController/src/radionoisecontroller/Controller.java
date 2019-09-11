@@ -168,7 +168,6 @@ public class Controller {
             audioOUT = new module_audioOUT();
             audioOUT.start();
         }
-        
         if(curState[8] == 0 && wifi != null){
             wifi.interrupt();
         }
@@ -512,6 +511,11 @@ public class Controller {
         
         if(servoZ > 180) servoZ = 180; else if(servoZ < 0) servoZ = 0;
         if(servoY > 180) servoY = 180; else if(servoY < 0) servoY = 0;
+        
+        if(curState[17] != 0){
+            servoZ = 90;
+            servoY = 90;
+        }
         
         //System.out.println("ServoZ: "+servoZ+"  ServoY: "+servoY);
         
