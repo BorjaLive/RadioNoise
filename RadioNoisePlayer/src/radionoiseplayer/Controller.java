@@ -55,7 +55,17 @@ public class Controller {
         
         outBuffer[0] = (byte)1;
         byte[] recv = new byte[BYTES_IN];
-        data_exchange(outBuffer, recv);
+        
+        port.writeBytes(outBuffer, outBuffer.length);
+        
+        while(port.bytesAvailable() != recv.length){
+            try {
+                Thread.sleep(CTRL_DELAY);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        port.readBytes(recv, recv.length);
         
         //System.out.println("RECIVIDO: "+Arrays.toString(recv));
         
@@ -73,7 +83,7 @@ public class Controller {
     
     public static void act(){
         System.arraycopy(curState, 0, pasState, 0, curState.length);
-        //data_exchange(outBuffer, curState);
+        data_exchange(outBuffer, curState);
         
         //Iniciar e interrumpir modulos
         if(recvData[9] == 0 && audioOUT != null){
@@ -195,14 +205,14 @@ public class Controller {
         outBuffer[8] = recvData[7];
         
         //LEDs de los modulos
-        outBuffer[9] = (byte) (controller == null?0:1);
+        outBuffer[9] = (byte) ((controller != null && controller.check() == 2)?1:0);
         outBuffer[10] = (byte) (video == null?0:1);
         outBuffer[11] = (byte) (audioIN == null?0:1);
         outBuffer[12] = (byte) (audioOUT == null?0:1);
         
         //Servos de camara
         outBuffer[13] = recvData[12];
-        outBuffer[14] = recvData[13];
+        outBuffer[14] = (byte) (180-byte2int(recvData[13]));
     }
    
     

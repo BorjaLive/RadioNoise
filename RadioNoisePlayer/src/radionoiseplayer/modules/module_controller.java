@@ -47,27 +47,26 @@ public class module_controller extends module{
     public void run() {
         servidor.iniciate(CONTROL_PORT);
         System.out.println("Servidor iniciado");
+        state = 1;
         
         while(!interrupted()){
             //Intentar aceptar la conexion
             servidor.accept(0);
             System.out.println("Peticion aceptada, conexion realizada");
-            
+            state = 2;
             //El servidor comienza reciviendo
             while(servidor.check()){
                 if(!servidor.recive(recv))
                     break;
                 //System.out.println("RECIVO: "+Arrays.toString(recv));
-                send[0] = (byte)250;
-                send[1] = (byte)230;
-                send[2] = (byte)210;
-                send[3] = (byte)190;
+
                 if(!servidor.send(send))
                     break;
                 //System.out.println("ENVIO: "+Arrays.toString(send));
                 
                 try{sleep(SEND_DELAY);}catch(InterruptedException e){break;}
             }
+            state = 1;
             System.out.println("El servidor se ha desconectado");
             servidor.disconnect();
             try {sleep(SEND_DELAY*10);} catch (InterruptedException ex) {break;}
