@@ -68,7 +68,7 @@ public class module_wifi extends module{
             }
         }else{
             //Seguramente Linux
-            if(!(executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" up") &&
+            if(!(executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" down") &&
                     executeWait("sudo ifconfig "+WLAN_INTERFACE_LINUX+" up") &&
                     executeWait("sudo iw dev "+WLAN_INTERFACE_LINUX+" connect MisakaNetwork"))){
                 state = 0;

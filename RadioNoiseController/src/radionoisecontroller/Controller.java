@@ -500,14 +500,14 @@ public class Controller {
         
         //Servomotores de la camara
         if(curState[20] >= 0 && curState[20] < 127 - STALL_UMBRAL*2)
-            servoY += byte2float(curState[25])*SENSIBILIDY_CONSTANT;
-        else if(curState[20] < 0 && curState[20] > STALL_UMBRAL*2 - 128)
             servoY -= byte2float(curState[25])*SENSIBILIDY_CONSTANT;
+        else if(curState[20] < 0 && curState[20] > STALL_UMBRAL*2 - 128)
+            servoY += byte2float(curState[25])*SENSIBILIDY_CONSTANT;
         
         if(curState[21] >= 0 && curState[21] < 127 - STALL_UMBRAL*2)
-            servoZ -= byte2float(curState[25])*SENSIBILIDY_CONSTANT;
-        else if(curState[21] < 0 && curState[21] > STALL_UMBRAL*2 - 128)
             servoZ += byte2float(curState[25])*SENSIBILIDY_CONSTANT;
+        else if(curState[21] < 0 && curState[21] > STALL_UMBRAL*2 - 128)
+            servoZ -= byte2float(curState[25])*SENSIBILIDY_CONSTANT;
         
         if(servoZ > 180) servoZ = 180; else if(servoZ < 0) servoZ = 0;
         if(servoY > 180) servoY = 180; else if(servoY < 0) servoY = 0;
@@ -605,7 +605,7 @@ public class Controller {
         }
         
         //Claxon
-        sendData[11] = curState[16]; //Activo
+        sendData[11] = (byte) (curState[16]==0?1:0); //Activo
         sendData[14] = curState[23]; //Frecuencia
         
         //Volumen

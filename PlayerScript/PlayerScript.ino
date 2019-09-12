@@ -19,6 +19,7 @@
 #define PIN_PWM_3L 7
 #define PIN_PWM_4R 8
 #define PIN_PWM_4L 9
+#define PIN_KEY 9
 
 #define PORT_SPEED 9600
 #define BYTES_IN 15
@@ -57,6 +58,7 @@ void setup() {
   pinMode(PIN_PWM_3L, OUTPUT);
   pinMode(PIN_PWM_4R, OUTPUT);
   pinMode(PIN_PWM_4L, OUTPUT);
+  pinMode(PIN_KEY, INPUT_PULLUP);
   
   Serial.begin(PORT_SPEED);
   Serial.setTimeout(50);
@@ -73,6 +75,18 @@ void loop() {
 
     if(buffIN[0] == (byte)1){
       //TEST: se contesta con un patron alternado
+  
+      //Prueba de la llave
+      digitalWrite(PIN_LED_Modulo_Controller, HIGH);
+      digitalWrite(PIN_LED_Modulo_Video, HIGH);
+      digitalWrite(PIN_LED_Modulo_AudioIN, HIGH);
+      digitalWrite(PIN_LED_Modulo_AudioOUT, HIGH);
+      while(digitalRead(PIN_KEY) == HIGH) delay(10);
+      digitalWrite(PIN_LED_Modulo_Controller, LOW);
+      digitalWrite(PIN_LED_Modulo_Video, LOW);
+      digitalWrite(PIN_LED_Modulo_AudioIN, LOW);
+      digitalWrite(PIN_LED_Modulo_AudioOUT, LOW);
+      
       bool last = false;
       for(int i = 0; i < BYTES_OUT; i++){
         Serial.write(last?0:1);

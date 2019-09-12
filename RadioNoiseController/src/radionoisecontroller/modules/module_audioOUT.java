@@ -10,16 +10,17 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 import radionoisecontroller.Controller;
+import radionoisecontroller.conn.TCPclient;
 
 public class module_audioOUT extends module{
     
-    private TCPserver servidor;
+    private TCPclient cliente;
     private byte[] sendBuffer, silence;
     
     private boolean enabled;
     
     public module_audioOUT(){
-        servidor = new TCPserver();
+        cliente = new TCPclient();
         enabled = false;
         silence = new byte[AUDIO_BUFFER_SIZE];
         for(int i = 0; i < AUDIO_BUFFER_SIZE; i++)
@@ -29,59 +30,49 @@ public class module_audioOUT extends module{
     @Override
     public void run() {
         try {
-            state = 1;
-            
             Mixer mixer = getDeviceMixer(DEVICE_AUDIO_IN);
             if(mixer == null){
                 Controller.reportDie(getClass());
                 return;
             }
             
-            servidor.iniciate(AUDIOOUT_PORT);
-            System.out.println("Servidor iniciado");
             
             TargetDataLine mic;
             AudioFormat format = new AudioFormat(44100.0f, 16, 1, true, true);
             
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-            mic = (TargetDataLine) AudioSystem.getLine(info);
+            mic = (TargetDataLine) mixer.getLine(info);
             mic.open(format);
             
             sendBuffer = new byte[AUDIO_BUFFER_SIZE];
             mic.start();
-            
-            //Intentar aceptar la conexion
-            servidor.accept(2000);
-            if(!servidor.check()){
-                Controller.reportDie(getClass());
-                return;
-            }
             System.out.println("Peticion aceptada, conexion realizada");
 
+            state = 1;
+            
+            //Intentar conectar
+            cliente.connect(SERVER_IP, AUDIOOUT_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
+            System.out.println("Cliente conectado");
+            
             state = 2;
 
-            while(servidor.check() && !interrupted()){
-                if(enabled){
-                    mic.read(sendBuffer, 0, AUDIO_CHUNK_SIZE);
-
-                    if(!servidor.send(sendBuffer))
+            while(cliente.check() && !interrupted()){
+                mic.read(sendBuffer, 0, AUDIO_CHUNK_SIZE);
+                
+                if(enabled)
+                    if(!cliente.send(sendBuffer))
                         break;
-                }else{
-                    if(!servidor.send(silence))
-                        break;
-                }
             }
             try {sleep(5);} catch (InterruptedException ex) {
                 Controller.reportDie(getClass());
                 return;
             }
-            System.out.println("El servidor se ha desconectado");                
-            servidor.disconnect();
+            System.out.println("El cliente se ha desconectado");                
+            cliente.disconnect();
             state = 1;
             
             mic.close();
-            servidor.shutdown();
-            System.out.println("MUERE EL SERVIDOR");
+            System.out.println("MUERE EL CLIENTE");
             state = 0;
         } catch (LineUnavailableException ex) {
             //Logger.getLogger(audio_sender.class.getName()).log(Level.SEVERE, null, ex);

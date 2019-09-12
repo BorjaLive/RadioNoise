@@ -261,6 +261,7 @@ El micrófono y altavoces se configuran en mono 16 bits y 4800 muestras por segu
 | D 9 OUT | Potencia motor 4 L |
 | D 10 OUT | Control Servo cámara Z |
 | D 11 OUT | Control Servo cámara Y |
+| D 31 IN | LLave |
 
 ### LEDs
 Todos los leds consumen 20 mA, por seguridad se considera 17 mA.

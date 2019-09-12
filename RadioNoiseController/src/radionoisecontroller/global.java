@@ -14,7 +14,7 @@ public class global {
     public static final String SERVER_IP = "192.168.0.1";
     public static final String WLAN_INTERFACE_WIN = "ALFAantena";
     public static final String WLAN_PROFILE_WIN = "MisakaNetwork";
-    public static final String WLAN_INTERFACE_LINUX = "wlan0";
+    public static final String WLAN_INTERFACE_LINUX = "wlan1";
     public static final int WLAN_SCANDELAY = 250;
     public static final int WLAN_SCANTIMEOUT = 100;
     public static final int CONTROL_PORT = 4421;
@@ -31,7 +31,7 @@ public class global {
     public static final int TICKS_PER_LED_BLINK = 5, TICKS_PER_RECORDING_BLINK = 20;
     public static final int BLINK_DURATION = 5*TICKS_PER_LED_BLINK;
     public static final int STALL_UMBRAL = 25, DIGITAL_HUMBRAL = 63, POTENCIOMETER_LOW_MARGIN = 15, POTENCIOMETER_HIGH_MARGIN = 250;
-    public static final float SENSIBILIDY_CONSTANT = 5.0f;
+    public static final float SENSIBILIDY_CONSTANT = 8.0f;
     public static final int TIME_TO_WAIT_BEFORE_SHOWING_THE_MIC_IS_RECORDING = 1000;
     
     public static String DEVICE_AUDIO_IN;
