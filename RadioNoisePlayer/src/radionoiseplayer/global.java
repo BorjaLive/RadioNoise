@@ -7,11 +7,11 @@ public class global {
     public static int BAUD_SPEED = 9600;
     static String ARDUINO_PORT = "/dev/ttyACM0";
     //public static final String ARDUINO_PORT = "COM4";
-    public static final boolean ARDUINO_OVERRIDE = true;
+    public static final boolean ARDUINO_OVERRIDE = false;
     public static int BYTES_IN = 6, BYTES_OUT = 15;
     
-    //public static String SERVER_IP = "192.168.0.5";
-    public static String SERVER_IP = "localhost";
+    public static String SERVER_IP = "192.168.0.5";
+    //public static String SERVER_IP = "localhost";
     public static final int CONTROL_PORT = 4421;
     public static final int VIDEO_PORT = 4422;
     public static final int AUDIOIN_PORT = 4424;
@@ -24,8 +24,8 @@ public class global {
     public static final int CONNECTION_RETRYS = 20, CONNECTION_WAIT_TIME = 25;
     public static final int TICKS_PER_BLINK = 5;
     
-    public static final String DEVICE_AUDIO_IN = "Device [plughw:2,0]";
-    public static final String DEVICE_AUDIO_OUT = "Device [plughw:2,0]";
+    public static final String DEVICE_AUDIO_IN = "Device [plughw:0,0]";
+    public static final String DEVICE_AUDIO_OUT = "ALSA [plughw:2,1]";
     //public static final String DEVICE_AUDIO_IN = "Micrófono (Realtek High Definit";
     //public static final String DEVICE_AUDIO_OUT = "Altavoces (Realtek High Definition Audio)";
     

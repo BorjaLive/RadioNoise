@@ -9,8 +9,8 @@ import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-//import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.opencv.opencv_core.IplImage;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+//import org.bytedeco.opencv.opencv_core.IplImage;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
@@ -106,11 +106,6 @@ public class module_video extends module{
 
 
             try {timer.sync();} catch (Exception ex) {break;}
-        }
-        try {
-            grabber.close();
-        } catch (FrameGrabber.Exception ex) {
-            //Logger.getLogger(module_video.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("El servidor de video se ha desconectado");
         servidor.disconnect();
