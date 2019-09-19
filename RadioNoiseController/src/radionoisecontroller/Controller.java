@@ -32,6 +32,9 @@ public class Controller {
     private static SerialPort port;
     public static int wlan_quality, wlan_signal;
     private static float[] voltajes;
+    private static byte[][] voltajesBuffer;
+    private static int voltajeBufferCounter;
+    private static float[] batteryValues, voltajeBufferMean;
     
     private static byte[] outBuffer;
     private static byte[] recvData, sendData;
@@ -42,7 +45,6 @@ public class Controller {
     private static boolean tanque, activeW1, activeW2, activeW3, activeW4;
     private static int[] blink;
     private static int servoZ, servoY;
-    private static float[] batteryValues;
     
     public static void initiate(){
         outBuffer = new byte[BYTES_OUT];
@@ -51,6 +53,9 @@ public class Controller {
         sendData = new byte[BYTES_SEND];
         recvData = new byte[BYTES_RECIVE];
         voltajes = new float[5];
+        voltajesBuffer = new byte[5][VOLTAJE_FILTER];
+        voltajeBufferMean = new float[5];
+        voltajeBufferCounter = 0;
         
         WM = null;
         
@@ -113,13 +118,6 @@ public class Controller {
         System.arraycopy(curState, 0, pasState, 0, curState.length);
         data_exchange(outBuffer, curState);
         
-        //Simular baterias
-        recvData[0] = (byte)250;
-        recvData[1] = (byte)230;
-        recvData[2] = (byte)210;
-        recvData[3] = (byte)190;
-        recvData[4] = (byte)180;
-        
         //Suavizar potenciometros
         for(int i = 22; i<= 27; i++){
             curState[i] = (byte) ((byte2int(curState[i])+byte2int(pasState[i]))/2);
@@ -128,7 +126,23 @@ public class Controller {
             else if(byte2int(curState[i]) > POTENCIOMETER_HIGH_MARGIN)
                 curState[i] = (byte)255;
         }
-        
+        //Filtro para voltajes TODO: Hacerlo funcionar
+        /*
+        for(int i = 0; i < 5; i++){
+            voltajeBufferMean[i] -= byte2int(voltajesBuffer[i][voltajeBufferCounter])/(float)VOLTAJE_FILTER;
+            voltajeBufferMean[i] += byte2int(recvData[i])/(float)VOLTAJE_FILTER;
+            voltajesBuffer[i][voltajeBufferCounter] = recvData[i];
+            
+            voltajeBufferCounter++;
+            if(voltajeBufferCounter == VOLTAJE_FILTER)
+                voltajeBufferCounter = 0;
+            
+            if(i == 2){
+                System.out.println(voltajeBufferMean[i]+"    "+byte2int(recvData[i]));
+            }
+            recvData[i] = (byte)voltajeBufferMean[i];
+        }
+        */
         
         //Iniciar e interrumpir modulos
         if(curState[7] == 0 && controller != null){
@@ -198,7 +212,7 @@ public class Controller {
         voltajes[2] = byte2float(recvData[2])*VOLTAJE_DIVIDER_CONSTANT_3;
         voltajes[3] = byte2float(recvData[3])*VOLTAJE_DIVIDER_CONSTANT_4;
         voltajes[4] = byte2float(recvData[4])*VOLTAJE_DIVIDER_CONSTANT_5;
-        
+        //System.out.println(voltajes[0]+"  "+voltajes[1]+"  "+voltajes[2]+"  "+voltajes[3]+"  "+voltajes[4]+"    "+VOLTAJE_DIVIDER_CONSTANT_5);
         //Actualizar pantallas
         WM.act(audioIN!=null&&audioIN.check()==2, audioOUT!=null&&audioOUT.check()==2, video!=null&&video.check()==2, controller!=null&&controller.check()==2, wifi!=null&&wifi.check()==2, audioOUT!=null&&audioOUT.getEnabled(), wlan_signal, wlan_quality, curState[26], curState[27], voltajes, curState[24], curState[18], curState[10]==1);
         
@@ -279,7 +293,7 @@ public class Controller {
     */
     private static void drive(){
         //Activacion de ruedas
-        if(voltajes[0] <= 0){
+        if(batteryValues[0] <= 0){
             if(activeW1){
                 activeW1 = false;
                 blink[5] = 0;
@@ -288,7 +302,7 @@ public class Controller {
                 blink[5] = 0;
             }
         }else activeW1 = curState[0] != 0;
-        if(voltajes[1] <= 0){
+        if(batteryValues[1] <= 0){
             if(activeW2){
                 activeW2 = false;
                 blink[6] = 0;
@@ -297,7 +311,7 @@ public class Controller {
                 blink[6] = 0;
             }
         }else activeW2 = curState[1] != 0;
-        if(voltajes[2] <= 0){
+        if(batteryValues[2] <= 0){
             if(activeW3){
                 activeW3 = false;
                 blink[7] = 0;
@@ -306,7 +320,7 @@ public class Controller {
                 blink[7] = 0;
             }
         }else activeW3 = curState[2] != 0;
-        if(voltajes[3] <= 0){
+        if(batteryValues[3] <= 0){
             if(activeW4){
                 activeW4 = false;
                 blink[8] = 0;
@@ -330,8 +344,16 @@ public class Controller {
         }
         
         //Potencia de las ruedas
-        float powerW1, powerW2, powerW3, powerW4;
-        powerW1 = powerW2 = powerW3 = powerW4 = byte2float(curState[24]);  //Potencia coarse
+        float powerW1, powerW2, powerW3, powerW4; //Potencia coarse
+        powerW1 = powerW2 = powerW3 = powerW4 = 0.0f;
+        if(activeW1)
+            powerW1 = byte2float(curState[24]);
+        if(activeW2)
+            powerW2 = byte2float(curState[24]);
+        if(activeW3)
+            powerW3 = byte2float(curState[24]);
+        if(activeW4)
+            powerW4 = byte2float(curState[24]);
         if(tanque){ //Conduccion modo tanque, ocho direcciones
             boolean powerD, powerI, dirD, dirI;
             int x, y;
@@ -461,6 +483,7 @@ public class Controller {
             powerW3 *= steerTuneI;
             powerW4 *= steerTuneD;
         }
+        
         if(curState[9] != 0){ //Si el PAN de traccion esta activado
             if(curState[22] < 0){ //Atenuar la delantera
                 powerW3 *= ((float)-curState[22])/128.0f;
@@ -470,7 +493,7 @@ public class Controller {
                 powerW2 *= ((float)curState[22])/127.0f;
             }
         }
-        
+        //System.out.println(powerW1+" "+powerW2+" "+powerW3+" "+powerW4);
         sendData[0] = float2byte(powerW1);  //Asignar las potencias
         sendData[1] = float2byte(powerW2);
         sendData[2] = float2byte(powerW3);

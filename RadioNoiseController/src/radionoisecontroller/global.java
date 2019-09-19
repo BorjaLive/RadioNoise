@@ -72,14 +72,15 @@ public class global {
     public static int LETTER_SPACING = 48;
     public static int LETTER_SHIFT = 32;
     
-    public static final float VOLTAJE_MAIN_MIN = 9.0f, VOLTAJE_MAIN_MAX = 12.6f, VOLTAJE_SERVO_MIN = 6.2f, VOLTAJE_SERVO_MAX = 8.1f;
-    public static final float VOLTAJE_DIVIDER_CONSTANT_1 = 13.66f, VOLTAJE_DIVIDER_CONSTANT_2 = 12.99f, VOLTAJE_DIVIDER_CONSTANT_3 = 13.41f, VOLTAJE_DIVIDER_CONSTANT_4 = 13.55f, VOLTAJE_DIVIDER_CONSTANT_5 = 13.34f; //TODO: Modificar con las medidas reales
+    public static final float VOLTAJE_MAIN_MIN = 9.0f, VOLTAJE_MAIN_MAX = 12.6f, VOLTAJE_SERVO_MIN = 6.6f, VOLTAJE_SERVO_MAX = 9.6f;
+    public static final float VOLTAJE_DIVIDER_CONSTANT_1 = 24.90f, VOLTAJE_DIVIDER_CONSTANT_2 = 24.52f, VOLTAJE_DIVIDER_CONSTANT_3 = 24.15f, VOLTAJE_DIVIDER_CONSTANT_4 = 24.71f, VOLTAJE_DIVIDER_CONSTANT_5 = 24.25f;
+    public static final int VOLTAJE_FILTER = 10;
     
     public static final int WINDOW_PADDING_X = 0, WINDOW_PADDING_Y = 0;
     
     public static void startConstants(){
         if(System.getProperty("os.name").toUpperCase().contains("WIN")){
-            ARDUINO_PORT = "COM7";
+            ARDUINO_PORT = "COM30";
             DEVICE_AUDIO_IN = "Auriculares";
             DEVICE_AUDIO_OUT = "Micrófono";
         }else{
@@ -90,7 +91,7 @@ public class global {
     }
     
     public static byte float2byte(float f){
-        return (byte)(f*256.0);
+        return (byte)(f*255.0);
     }
     public static int byte2int(byte b){
         return (int)(b & 0xFF);

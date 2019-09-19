@@ -19,7 +19,7 @@
 #define PIN_PWM_3L 7
 #define PIN_PWM_4R 8
 #define PIN_PWM_4L 9
-#define PIN_KEY 9
+#define PIN_KEY 31
 
 #define PORT_SPEED 9600
 #define BYTES_IN 15
@@ -59,6 +59,15 @@ void setup() {
   pinMode(PIN_PWM_4R, OUTPUT);
   pinMode(PIN_PWM_4L, OUTPUT);
   pinMode(PIN_KEY, INPUT_PULLUP);
+
+  analogWrite(PIN_PWM_1L, 0);
+  analogWrite(PIN_PWM_1R, 0);
+  analogWrite(PIN_PWM_2L, 0);
+  analogWrite(PIN_PWM_2R, 0);
+  analogWrite(PIN_PWM_3L, 0);
+  analogWrite(PIN_PWM_3R, 0);
+  analogWrite(PIN_PWM_4L, 0);
+  analogWrite(PIN_PWM_4R, 0);
   
   Serial.begin(PORT_SPEED);
   Serial.setTimeout(50);
@@ -67,6 +76,18 @@ void setup() {
 byte buffIN[BYTES_IN];
 
 void loop() {
+  if(digitalRead(PIN_KEY) == HIGH){
+    analogWrite(PIN_PWM_1L, 0);
+    analogWrite(PIN_PWM_1R, 0);
+    analogWrite(PIN_PWM_2L, 0);
+    analogWrite(PIN_PWM_2R, 0);
+    analogWrite(PIN_PWM_3L, 0);
+    analogWrite(PIN_PWM_3R, 0);
+    analogWrite(PIN_PWM_4L, 0);
+    analogWrite(PIN_PWM_4R, 0);
+    delay(100);
+    return;
+  }
   //Comprobar que se ha enviado una orden completa
   if(Serial.available() == BYTES_IN){
     //Leer todos los bytes recividos

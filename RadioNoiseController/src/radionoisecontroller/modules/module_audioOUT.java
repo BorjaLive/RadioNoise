@@ -46,7 +46,6 @@ public class module_audioOUT extends module{
             
             sendBuffer = new byte[AUDIO_BUFFER_SIZE];
             mic.start();
-            System.out.println("Peticion aceptada, conexion realizada");
 
             state = 1;
             
