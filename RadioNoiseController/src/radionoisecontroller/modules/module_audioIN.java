@@ -53,6 +53,7 @@ public class module_audioIN extends module{
             state = 1;
             
             cliente.connect(SERVER_IP, AUDIOIN_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
+            System.out.println("Cliente conectado");
 
             if(cliente.check())
                 state = 2;

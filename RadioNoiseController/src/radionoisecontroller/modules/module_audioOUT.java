@@ -53,7 +53,8 @@ public class module_audioOUT extends module{
             cliente.connect(SERVER_IP, AUDIOOUT_PORT, CONNECTION_RETRYS, CONNECTION_WAIT_TIME);
             System.out.println("Cliente conectado");
             
-            state = 2;
+            if(cliente.check())
+                state = 2;
 
             while(cliente.check() && !interrupted()){
                 mic.read(sendBuffer, 0, AUDIO_CHUNK_SIZE);
