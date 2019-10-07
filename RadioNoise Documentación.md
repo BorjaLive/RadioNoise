@@ -1,5 +1,5 @@
 
-
+  
 
 # RadioNoise TCP/IP Vehicle Controller
 Software para controlar un vehículo radio-control con Raspberry Pi y Arduino, acompañado de diagramas de hardware.
@@ -608,3 +608,67 @@ Esta disposición es la más lógica que he encotnrado.
 Entre los altavoces y el powerbank se rellena el final (sí, es un mal diseño que el centro de masas esté arriba, pero los joysticks son demasiado grandes) La protoboard está pegada a la pared izquierda y la protoboard al principio, para hacerlas accesibles.
 ![Disposicion componentes](https://i.imgur.com/HuEq91r.png)
 
+## Enlaces y precios de los componentes
+
+### Coche
+
+- Raspberry Pi 3 (1GB) 35,24 € [Kubii](https://www.kubii.es/raspberry-pi-3-2-b/1628-raspberry-pi-3-modelo-b-1-gb-kubii-640522710850.html)
+- Arduino Mega 2560 34,50€ [Bricogeek](https://tienda.bricogeek.com/arduino/306-arduino-mega-2560.html)
+- Maderas 4,50€ [Corte Maderas](https://www.cortemaderas.com/)
+- Caja pilas AA 8,99€ [Amazon](https://www.amazon.es/gp/product/B07333LC7N/ref=ppx_yo_dt_b_asin_title_o07_s02?ie=UTF8&psc=1)
+- Pilas AA (gran cantidad) 6,99€ [Amazon](https://www.amazon.es/gp/product/B00NTCH52W/ref=ppx_yo_dt_b_asin_title_o07_s02?ie=UTF8&psc=1)
+- Escuadras para madera 8,99€ [Amazon](https://www.amazon.es/gp/product/B075M8G5QT/ref=ppx_yo_dt_b_asin_title_o07_s02?ie=UTF8&psc=1)
+- Adaptador inalambrico Alfa Network 31,05€ [Amazon](https://www.amazon.es/gp/product/B007FPRUGU/ref=ppx_yo_dt_b_asin_title_o07_s01?ie=UTF8&psc=1)
+- Bisagras 7,99€ [Amazon](https://www.amazon.es/gp/product/B07C7LSYHJ/ref=ppx_yo_dt_b_asin_title_o06_s00?ie=UTF8&psc=1)
+- Tarjeta SD 7,20€ [Amazon](https://www.amazon.es/gp/product/B06XFSZGCC/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
+- Soporte motor 550 x4 9,04€ [Amazon](https://www.amazon.es/gp/product/B06XFS6QRJ/ref=ppx_yo_dt_b_asin_title_o07_s00?ie=UTF8&psc=1)
+- Altavoces 6,99€ [Amazon](https://www.amazon.es/gp/product/B00BS9I810/ref=ppx_yo_dt_b_asin_title_o06_s00?ie=UTF8&psc=1)
+- Microfono con shockmount 53,39€  [Amazon](https://www.amazon.es/gp/product/B0748F765H/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+- Tarjeta de sonido USB 10,99€ [Amazon](https://www.amazon.es/gp/product/B01N905VOY/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1)
+- Cable USB tipo C pequeño y recto 6,49€ [Amazon](https://www.amazon.es/gp/product/B01LYBCFGS/ref=ppx_yo_dt_b_asin_title_o06_s00?ie=UTF8&psc=1)
+- Servomotor con soporte 18,99€ [Amazon](https://www.amazon.es/gp/product/B07K68MK3Y/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1)
+-  Servomotor gran torque 19,28€ [Amazon](https://www.amazon.es/gp/product/B071GQ6TP7/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1)
+- Cargador con regulador para baterias de litio 16,99€ [Amazon](https://www.amazon.es/gp/product/B07MP6X2YF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
+- Disipador RPI 3 19,99€ [Amazon](https://www.amazon.es/gp/product/B07GBV3D31/ref=ppx_yo_dt_b_asin_title_o07_s00?ie=UTF8&psc=1)
+- Conectores XT60 x4 27,96€ [Amazon](https://www.amazon.es/gp/product/B073QMJMRV/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1)
+- Drivers para motor x4 37,16€ [Amazon](https://www.amazon.es/gp/product/B072Q9X89N/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1)
+- Medidores de batería x4 11,72€ [Banggood](https://www.banggood.com/es/GY-6A-12V-24V-36V-48V-Lead-Acid-Battery-2-15S-Lithium-Battery-Capacity-Indicator-Digital-Voltmeter-p-1234167.html?rmmds=myorder)
+- Interruptor con cerradura 2,82€ [Banggood](https://www.banggood.com/es/Ignition-Switch-Keys-Lock-for-Motorcycle-Electric-Scooters-Bike-p-939473.html?rmmds=myorder)
+- Ruedas 16,96€ [Banggood](https://www.banggood.com/es/4PCS-Wheel-Rim-Tires-HSP-110-Monster-Truck-RC-Car-12mm-Hub-88005-p-1072827.html?rmmds=myorder)
+- Motores 550 con reductora 1:30 o 1:10 x4 48,44€ [Banggood](https://www.banggood.com/Chihai-GM37-550-12V-3305501650rpm-Reduction-Gear-Carbon-Brush-High-Torque-DC-Geared-Motor-p-1476267.html?rmmds=myorder)
+- Acopladores de 7mm a hexagonal x4 5,40€ [Banggood](https://www.banggood.com/3mm-4mm-5mm-6mm-7mm-Hexagonal-Copper-Coupling-Coupler-for-Robot-Car-Wheel-p-1171587.html?rmmds=myorder)
+- Baterias 3S 30C x4 55,48€ [Banggood](https://www.banggood.com/ZOP-Power-11_1V-2200MAH-3S-30C-Lipo-Battery-XT60-Plug-p-967264.html?rmmds=myorder)
+
+
+### Mando
+
+-	Raspberry Pi 4 (4GB) 59,44€ [Kubbi](https://www.kubii.es/raspberry-pi-3-2-b/2677-nuevo-raspberry-pi-4-modelo-b-3272496298491.html?src=raspberrypi)
+- Arduino Mega 2560 34,50€ [Bricogeek](https://tienda.bricogeek.com/arduino/306-arduino-mega-2560.html)
+- Adaptador inalambrico Alfa Network 31,05€ [Amazon](https://www.amazon.es/gp/product/B007FPRUGU/ref=ppx_yo_dt_b_asin_title_o07_s01?ie=UTF8&psc=1)
+- Tarjeta SD 7,20€ [Amazon](https://www.amazon.es/gp/product/B06XFSZGCC/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
+- Cable USB tipo C a USB A 6,99€ [Amazon](https://www.amazon.es/gp/product/B074XQKQ82/ref=ppx_yo_dt_b_asin_title_o07_s02?ie=UTF8&psc=1)
+- Pantalla Raspberry Pi x2 79,98€ [Amazon](https://www.amazon.es/gp/product/B01HPV7OEG/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1)
+- Cable microHDMI recto 2,3€ [Amazon](https://www.amazon.es/gp/product/B07J5YWFZB/ref=ppx_yo_dt_b_asin_title_o09_s00?ie=UTF8&psc=1)
+- Extensor USB tipo C 9,79€ [Amazon](https://www.amazon.es/gp/product/B07DS4HXKQ/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&psc=1)
+- Comillas pequeñas discretas 1,29€ [Amazon](https://www.amazon.es/gp/product/B07HFWQYQY/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1)
+- Tarjeta de sonido USB 10,99€ [Amazon](https://www.amazon.es/gp/product/B01N905VOY/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1)
+- Placas perforadas 17,99€ [Amazon](https://www.amazon.es/gp/product/B07DBY1VHY/ref=ppx_yo_dt_b_asin_title_o09_s00?ie=UTF8&psc=1)
+- Modulo HC-12 9,99€ [Amazon](https://www.amazon.es/gp/product/B0148BLVE0/ref=ppx_yo_dt_b_asin_title_o07_s00?ie=UTF8&psc=1)
+- Jumpers arduino x4 27,96€ [Amazon](https://www.amazon.es/gp/product/B01NGTXASZ/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+- Microfono lavaliere 13,99€ [Amazon](https://www.amazon.es/gp/product/B073GJQKL1/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
+- Disipador RPI 4 18,00€ [Amazon](https://www.amazon.es/gp/product/B07TXZK93S/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&psc=1)
+- Interruptores que simulan un enchufe 1,32€ [Banggood](https://www.banggood.com/es/5pcs-Black-Push-Button-Mini-Switch-6A-10A-110V-250V-KCD1-101-2Pin-Snap-in-OnOff-Rocker-Switch-p-1096122.html?rmmds=myorder)
+- Pulsadores 3,01€ [Banggood](https://www.banggood.com/es/Wendao-R13-507-125V-3A-16mm-No-Lock-Self-reset-Switch-Push-Button-OFFON-10pcs-p-1060608.html?rmmds=myorder%20)
+- Conmutadores 3,81€ [Banggood](https://www.banggood.com/es/Wendao-MTS-102-ONON-SPDT-AC-125V-6A-3-Pins-Toggle-Rocker-Switch-10pcs-p-1060404.html?rmmds=myorder)
+- Resistencias 4,69€ [Banggood](https://www.banggood.com/es/1000Pcs-50-Values-14W-Metal-Film-Resistor-Resistance-Assortment-Kit-Set-1-p-1363869.html?rmmds=myorder)
+- Joystick x2 23,48€ [Banggood](https://www.banggood.com/es/Joystick-potentiometer-JH-D202X-R2R4-10K-2D-Monitor-Keyboard-ball-controller-For-Photographic-Film-p-1144188.html?rmmds=myorder)
+- Potenciometros 3,98€ [Banggood](https://www.banggood.com/es/10pcs-10K-Ohm-Potentiometer-Single-Linear-p-1414448.html?rmmds=myorder)
+- Cubiertas potenciometros 5,33€ [Banggood](https://www.banggood.com/es/10pcs-6mm-Shaft-Hole-Dia-Plastic-Threaded-knurled-Potentiometer-Knobs-Caps-p-983613.html?rmmds=myorder)
+- LEDs 3,10€ [Banggood](https://www.banggood.com/es/Geekcreit-375pcs-3MM-5MM-LED-Light-Emitting-Diode-Beads-Resistance-Lights-Kits-Bulb-Lamp-p-1027601.html?rmmds=myorder)
+
+
+
+Muy recomendable Extintor multiusos pequeño 19,44€ [Amazon](https://www.amazon.es/gp/product/B076ZVGZ6J/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
+
+Por todo esto, el coste de fabricar un nuevo coche sería de 372,72€.
+[Este kit](https://www.banggood.com/TL-TECH-KiBOT-2-Arduino-6DOF-RC-Robot-Arm-Car-PS2-Stick-Control-Education-Kit-p-1417149.html?rmmds=mywishlist&cur_warehouse=CN) cuesta menos y encima tiene brazo.
